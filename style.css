@@ -1,0 +1,14 @@
+:root{
+    --light-blue-container: rgba(186, 218, 241, 0.55);
+    --dark-blue: rgba(10, 34, 94, 1);
+    --light-blue: #BADAF1;
+}
+
+@font-face {
+  font-family: 'Bukhari'; 
+  src: url('./assets/fonts/Bukhari\ Script.ttf') format('truetype');
+}
+
+h1{
+    font-family: 'Bukhari', sans-serif;
+}
