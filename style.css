@@ -20,6 +20,12 @@
 
 h1{
     font-family: 'Bukhari', sans-serif;
+    color: #fff;
+    text-shadow: 
+        4px 4px #105ea4,  
+        8px 8px 0px rgba(16, 94, 164, 0.5);;
+    transform: rotate(-15deg);
+    font-size: 10vh;
 }
 
 body{
@@ -30,4 +36,93 @@ body{
     overflow: hidden;
     margin: 0;
 }
+
+input{
+    background-color: transparent;
+    border: none; 
+    outline: none;
+    color: #fff; 
+    border-radius: 10px; 
+    margin-left: 25px;
+    width: 100%;
+    height: 90%; 
+    font-size: 16px; 
+}
+
+.main-container{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-container{
+    position: relative;
+    background-color: var(--light-blue-container);
+    width: 32%;
+    height: 40%;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.main-title{
+    position: absolute;
+    top: -120px; 
+    transform: rotate(-10deg);  
+}
+
+.input-container{
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 30px;
+    margin-top: 50px;
+    
+}
+
+.input-container-depart{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: 20px;
+}
+
+.input-container-destination{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: 20px;
+}
+
+.input{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dark-blue);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.button{
+    background-color: var(--light-blue);
+    width: 25%;
+    margin-left: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fas{
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+
 
