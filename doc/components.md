@@ -1,6 +1,6 @@
 <div align ="center">
     <h1>De la Maquette aux Composants</h1>
-    <img  src="../maquette-canva/1. Page d&apos;acceuil.png" style="width:50%; ">
+    <img  src="./maquette-canva/1. Page d&apos;acceuil.png" style="width:50%; ">
 </div>
 
 ## Sommaire

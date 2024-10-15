@@ -1,13 +1,15 @@
-class SearchComponent extends HTMLElement {
-    constructor() {
-        super()
-        this.render();
-        this.addEventListener();
-    }
-    render() {
-        this.innerHTML = `
-            <link rel="stylesheet" href="./components/style-search.css">
-            <div class="main-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./components/transports-buttons/transports-buttons.js" defer></script>
+    <script src="./components/transport-button/transport-button.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="main-container">
                 <div class="search-container">
                     <h1 class="main-title">Santye</h1>
                     <div class="inputs-container">
@@ -30,23 +32,8 @@ class SearchComponent extends HTMLElement {
                                 <span><i class="fas fa-arrow-right"></i></span>
                             </div>
                         </div>
+                        <transports-buttons></transports-buttons>
                     </div>
                 </div>
-            </div>
-        `;
-    }
-
-    addEventListeners() {
-        const validationButton = this.querySelector('.validation-button');
-        validationButton.addEventListener('click', () => this.addTransportsButtons());
-    }
-
-    addTransportsButtons(){
-        const newComponent = document.createElement('transports-buttons');
-        
-        const inputsContainer = this.querySelector('.inputs-container');
-        inputsContainer.appendChild(newComponent);
-    }
-}
-
-customElements.define('search-component', SearchComponent);
+        </div>
+</html>

@@ -1,0 +1,7 @@
+.transports-buttons-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 10px;
+    height: 100%;
+}
