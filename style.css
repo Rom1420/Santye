@@ -200,6 +200,12 @@ p{
 .fas{
     font-size: xx-large;
     font-weight: bolder;
+    color: var(--dark-blue);
 }
 
+.fa-solid{
+    font-size: 2.5rem;
+    font-weight: bolder;
+    color: var(--light-blue);
+}
 

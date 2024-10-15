@@ -21,3 +21,8 @@
     -webkit-font-smoothing: subpixel-antialiased;
     cursor: pointer;
 }
+
+.time{
+    font-size: 1.4rem;
+}
+

@@ -7,10 +7,10 @@ class TransportsButtons extends HTMLElement {
         this.innerHTML = `
             <link rel="stylesheet" href="./components/transports-buttons/style.css">
             <div class="transports-buttons-container">
-                <transport-button></transport-button>
-                <transport-button></transport-button>
-                <transport-button></transport-button>
-                <transport-button></transport-button>
+                <transport-button icon="fa-person-walking"></transport-button>
+                <transport-button icon="fa-bicycle"></transport-button>
+                <transport-button icon="fa-bus-simple"></transport-button>
+                <transport-button icon="fa-car"></transport-button>
             </div>
         `;    
     }

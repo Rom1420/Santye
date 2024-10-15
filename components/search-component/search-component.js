@@ -15,7 +15,7 @@ class SearchComponent extends HTMLElement {
                             <div class="input">
                                 <input type="text" placeholder="Départ">
                                 <div class="location-button">
-                                    <span><i class="fas fa-location"></i></span>
+                                    <span><i class="fas fa-location-dot"></i></span>
                                 </div>
                             </div>
                         </div>
@@ -23,7 +23,7 @@ class SearchComponent extends HTMLElement {
                             <div class="input">
                                 <input type="text" placeholder="Destination">
                                 <div class="location-button">
-                                    <span><i class="fas fa-location"></i></span>
+                                    <span><i class="fas fa-location-dot"></i></span>
                                 </div>
                             </div>
                             <div class="validation-button">
