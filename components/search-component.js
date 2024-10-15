@@ -2,6 +2,7 @@ class SearchComponent extends HTMLElement {
     constructor() {
         super()
         this.render();
+        this.addEventListener();
     }
     render() {
         this.innerHTML = `
@@ -33,6 +34,18 @@ class SearchComponent extends HTMLElement {
                 </div>
             </div>
         `;
+    }
+
+    addEventListeners() {
+        const validationButton = this.querySelector('.validation-button');
+        validationButton.addEventListener('click', () => this.addTransportsButtons());
+    }
+
+    addTransportsButtons(){
+        const newComponent = document.createElement('transports-buttons');
+        
+        const inputsContainer = this.querySelector('.inputs-container');
+        inputsContainer.appendChild(newComponent);
     }
 }
 
