@@ -84,7 +84,7 @@ p{
     align-items: center;
 }
 
-.content-container{
+.right-container{
     position: relative;
     background-color: var(--light-blue-container);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -95,7 +95,34 @@ p{
     border-radius: 30px;
     display: flex;
     justify-content: center;
-    transition: height 0.3s ease-in-out;
+    /*transition: height 0.3s ease-in-out;*/
+    transition: width 0.5s ease
+}
+
+.left-container{
+    position: relative;
+    background-color: var(--light-blue-container);
+    
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    width: 0%;
+    height: 80vh; 
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    /*transition: height 0.3s ease-in-out;*/
+    transition: width 0.5s ease, border 0.5s ease, margin 0.5s ease;
+    margin-right: 0; 
+}
+
+.main-container.reduced .right-container {
+    width: 55%; 
+}
+
+.main-container.reduced .left-container {
+    width: 30%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-right: 30px;
 }
 
 
@@ -125,4 +152,62 @@ p{
     align-items: center;
     border: 2px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.menu-button {
+    background-color: var(--light-blue);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 54px;
+    height: 49px;
+    cursor: pointer;
+    position: absolute;
+    top: 23px;
+    left: -36px;
+    transition: left 0.5s ease; /* Animation pour le déplacement du bouton */
+}
+
+.main-container.reduced .menu-button {
+    left: -66px; /* Position finale à 66px */
+}
+
+.icon-bar {
+    width: 100%;
+    height: 5px;
+    background-color: var(--dark-blue);
+    border-radius: 2px;
+}
+
+.eta-container {
+    background-color: var(--dark-blue);
+    padding: 10px; 
+    border-radius: 8px; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    position: absolute;
+    top: 50px;
+    right: 100px; 
+    
+    transform: translateX(50%); 
+}
+
+#clock {
+    padding-right: 10px; 
+    width: 30px; 
+    height: auto; 
+}
+
+#ETA {
+    color: var(--light-blue);
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px; 
+    margin: 0; 
 }
