@@ -9,7 +9,6 @@
 
 .transport-button{
     background-color: var(--dark-blue);
-    aspect-ratio: 1;
     height: 85%;
     border-radius: 10px;
     display: flex;
@@ -26,7 +25,7 @@
 .transport-button:hover{
     transform: scale(1.04);
 }
-
+ 
 .time{
     font-size: 1.4rem;
 }
