@@ -71,3 +71,58 @@ p{
     font-weight: bolder;
     color: var(--light-blue);
 }
+
+
+/* Style de la map */
+
+.main-container{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-container{
+    position: relative;
+    background-color: var(--light-blue-container);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    width: 70vw;
+    height: 80vh; 
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    transition: height 0.3s ease-in-out;
+}
+
+
+.main-title{
+    z-index: 10;
+    position: absolute;
+    top: -120px; 
+    transform: rotate(-10deg);  
+}
+
+.map-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.map{
+    overflow: hidden; 
+    width: 100%;
+    height: 100%; 
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}

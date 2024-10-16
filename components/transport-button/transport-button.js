@@ -7,6 +7,7 @@ class TransportButton extends HTMLElement {
 
     render(shadow) {
         const icon = this.getAttribute('icon') || 'fa-question';
+        const time = this.getAttribute('time') || '?';
 
         shadow.innerHTML = `
              <link rel="stylesheet" href="./components/transport-button/style.css">
@@ -16,7 +17,7 @@ class TransportButton extends HTMLElement {
                 <div class="transport-button">
                     <span><i class="fa-solid ${icon}"></i></span>
                 </div>
-                <p class="time">25 min</p>
+                <p class="time">${time} min</p>
             </div>
         `;
     }

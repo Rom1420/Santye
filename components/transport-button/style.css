@@ -9,6 +9,7 @@
 
 .transport-button{
     background-color: var(--dark-blue);
+    aspect-ratio: 1;
     height: 85%;
     border-radius: 10px;
     display: flex;
