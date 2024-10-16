@@ -1,8 +1,8 @@
 class SearchComponent extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.render();
-        this.addEventListener();
+        this.addEventListeners();
     }
     render() {
         this.innerHTML = `
@@ -42,10 +42,18 @@ class SearchComponent extends HTMLElement {
     }
 
     addTransportsButtons(){
-        const newComponent = document.createElement('transports-buttons');
-        
-        const inputsContainer = this.querySelector('.inputs-container');
-        inputsContainer.appendChild(newComponent);
+        const transportsButtons = this.querySelector('transports-buttons');
+        const inputsContainer = this.querySelector('.inputs-container'); 
+        const searchContainer = this.querySelector('.search-container');
+
+        if (!transportsButtons) {
+            const newTransportsButtons = document.createElement('transports-buttons');
+            inputsContainer.appendChild(newTransportsButtons);
+            searchContainer.classList.add('expanded');
+        } else {
+            inputsContainer.removeChild(transportsButtons);
+            searchContainer.classList.remove('expanded');
+        }
     }
 }
 

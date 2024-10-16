@@ -20,6 +20,11 @@
     transform: translateZ(0);
     -webkit-font-smoothing: subpixel-antialiased;
     cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.transport-button:hover{
+    transform: scale(1.04);
 }
 
 .time{

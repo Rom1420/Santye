@@ -14,10 +14,15 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(1px);
     width: 38%;
-    height: 45vh;
+    height: 40vh; 
     border-radius: 30px;
     display: flex;
     justify-content: center;
+    transition: height 0.3s ease-in-out;
+}
+
+.search-container.expanded{
+    height: 55vh;
 }
 
 @media (max-width: 768px) {
@@ -46,10 +51,12 @@
     position: relative;
     display: grid;
     grid-template-columns: 1fr; 
-    grid-template-rows: auto auto;
+    grid-template-rows: repeat(3, 1fr);
     width: 100%;
     margin: 30px;
     margin-top: 50px;
+    margin-bottom: 10px;
+    overflow: hidden;
 }
 
 .depart-container {
@@ -71,14 +78,8 @@
     align-content: center;
 }
 
-.arrow-button {
-    background-color: #BADAF1;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.3s transform ease-in-out;
+.validation-button:hover, .location-button:hover{
+    transform: scale(1.04);
 }
 
 .location-button {
@@ -89,6 +90,7 @@
     border-radius: 10px;
     cursor: pointer;
     aspect-ratio: 1;
+    transition: 0.3s transform ease-in-out;
 }
 
 .input{
@@ -128,10 +130,5 @@
 }
 
 .button:hover{
-    transform: scale(1.1);
-}
-
-.fas{
-    font-size: xx-large;
-    font-weight: bolder;
+    transform: scale(1.04);
 }

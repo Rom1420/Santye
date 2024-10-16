@@ -1,11 +1,13 @@
 class TransportsButtons extends HTMLElement {
     constructor() {
         super()
-        this.render();
+        const shadow = this.attachShadow({ mode: 'open' });
+        this.render(shadow);
     }
-    render() {
-        this.innerHTML = `
+    render(shadow) {
+        shadow.innerHTML = `
             <link rel="stylesheet" href="./components/transports-buttons/style.css">
+            <link rel="stylesheet" href="./style.css">
             <div class="transports-buttons-container">
                 <transport-button icon="fa-person-walking"></transport-button>
                 <transport-button icon="fa-bicycle"></transport-button>
