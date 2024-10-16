@@ -3,7 +3,12 @@ class SearchComponent extends HTMLElement {
         super();
         this.render();
         this.addEventListeners();
+
+        if (this.getAttribute('etat') === 'permute') {
+            this.addTransportsButtons(); 
+        }
     }
+
     render() {
         this.innerHTML = `
             <link rel="stylesheet" href="./components/search-component/style.css">
@@ -42,19 +47,41 @@ class SearchComponent extends HTMLElement {
     }
 
     addTransportsButtons(){
-        const transportsButtons = this.querySelector('transports-buttons');
         const inputsContainer = this.querySelector('.inputs-container'); 
         const searchContainer = this.querySelector('.search-container');
+        const destinationContainer = this.querySelector('.destination-container');
+        const validationButton = this.querySelector('.validation-button')
 
-        if (!transportsButtons) {
-            const newTransportsButtons = document.createElement('transports-buttons');
-            inputsContainer.appendChild(newTransportsButtons);
-            searchContainer.classList.add('expanded');
-        } else {
-            inputsContainer.removeChild(transportsButtons);
-            searchContainer.classList.remove('expanded');
-        }
+        const newTransportsButtons = document.createElement('transports-buttons');
+        inputsContainer.appendChild(newTransportsButtons);
+        searchContainer.classList.add('expanded');
+        destinationContainer.removeChild(validationButton);
+
+        const permuteButton = document.createElement('div');
+        permuteButton.classList.add('permute-button');
+
+        const span = document.createElement('span');
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-repeat'; 
+
+        
+        span.appendChild(icon);
+        permuteButton.appendChild(span);
+
+        permuteButton.addEventListener('click', () => this.swapInputs());
+
+        destinationContainer.prepend(permuteButton);
+        destinationContainer.classList.add('show-permute-button');
     }
+
+    swapInputs() {
+    const departInput = this.querySelector('.depart-container input');
+    const destinationInput = this.querySelector('.destination-container input');
+
+    const temp = departInput.value;
+    departInput.value = destinationInput.value;
+    destinationInput.value = temp;
+}
 }
 
 customElements.define('search-component', SearchComponent);

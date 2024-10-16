@@ -78,6 +78,10 @@
     align-content: center;
 }
 
+.destination-container.show-permute-button {
+    grid-template-columns: auto 1fr;
+}
+
 .validation-button:hover, .location-button:hover{
     transform: scale(1.04);
 }
@@ -114,7 +118,7 @@
     font-size: 1.2rem;   
 }
 
-.validation-button{
+.validation-button, .permute-button{
     background-color: var(--light-blue);
     aspect-ratio: 1;
     height: 90%;
