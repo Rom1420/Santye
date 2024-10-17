@@ -52,6 +52,13 @@ class SearchComponent extends HTMLElement {
         const validationButton = this.querySelector('.validation-button')
 
         const newTransportsButtons = document.createElement('transports-buttons');
+
+        newTransportsButtons.addEventListener('click', (event) => {
+        if (!this.classList.contains('map-displayed')) {
+                this.replaceWithMapComponent();
+            }
+        });
+
         if (this.classList.contains('map-displayed')) {
             newTransportsButtons.setAttribute('etat', 'map-displayed');
         }
@@ -81,13 +88,19 @@ class SearchComponent extends HTMLElement {
     }
 
     swapInputs() {
-    const departInput = this.querySelector('.depart-container input');
-    const destinationInput = this.querySelector('.destination-container input');
+        const departInput = this.querySelector('.depart-container input');
+        const destinationInput = this.querySelector('.destination-container input');
 
-    const temp = departInput.value;
-    departInput.value = destinationInput.value;
-    destinationInput.value = temp;
-}
+        const temp = departInput.value;
+        departInput.value = destinationInput.value;
+        destinationInput.value = temp;
+    }
+    replaceWithMapComponent() {
+        const mapComponent = document.createElement('map-component');
+        this.parentNode.replaceChild(mapComponent, this);
+
+        mapComponent.connectedCallback();
+    }
 }
 
 customElements.define('search-component', SearchComponent);

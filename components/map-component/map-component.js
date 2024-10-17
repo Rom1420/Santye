@@ -1,6 +1,9 @@
 class MapComponent extends HTMLElement {
     constructor() {
         super();
+        
+    }
+    connectedCallback() {
         this.render();
         this.addEventListeners();
     }
