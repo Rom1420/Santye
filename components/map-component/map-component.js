@@ -15,9 +15,15 @@ class MapComponent extends HTMLElement {
     render() {
         this.innerHTML = `
             <link rel="stylesheet" href="./style.css">
+            <link rel="stylesheet" href="./components/map-component/style.css">
+            <link rel="stylesheet" href="./components/details-component/style.css">
             <div class="main-container">
             <div class="left-container">
-                <search-component etat="map-displayed"></search-component>
+                <div id="scroll">
+                    <search-component etat="map-displayed"></search-component>
+                    <div class="separation-line"></div>
+                    <details-component></details-component>
+                </div>
             </div>
             <div class="right-container">
                 <h1 class="main-title">Santye</h1>

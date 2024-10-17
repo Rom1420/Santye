@@ -6,10 +6,13 @@ class DetailsComponent extends HTMLElement {
         this.render(shadow);
         this.addDetails("Marcher 800m",false);
         this.addDetails("Prendre la deuxième sortie",true);
+        this.addSeparation();
         this.addDetails("Marcher 500m",false);
         this.addDetails("Tourner à gauche sur route des Combes",true);
+        this.addSeparation();
         this.addDetails("Marcher 800m",false);
         this.addDetails("Prendre la deuxième sortie",true);
+        this.addSeparation();
         this.addDetails("Marcher 500m",false);
         this.addDetails("Tourner à gauche sur route des Combes",true);
     }
@@ -35,6 +38,13 @@ class DetailsComponent extends HTMLElement {
         }
 
         main_div.appendChild(detailDiv); // Ajoute la div au conteneur principal
+    }
+
+    addSeparation(){
+        const main_div = this.shadowRoot.querySelector('.details-component-container');
+        const separationLine = document.createElement('div');
+        separationLine.classList.add('separation-line');
+        main_div.appendChild(separationLine);
     }
 
 }

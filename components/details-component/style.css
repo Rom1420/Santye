@@ -1,39 +1,23 @@
 .details-component-container {
-    padding: 0px 10px;
-    margin: 0px 4px;
-    height: 57%;
+    padding: 20px 20px;
+    margin: 0px 0px;
     font-size: x-large;
-    padding-top: 20px;
-    margin-top: 262px;
     display: flex;
     flex-direction: column; /* Affiche les détails en colonne */
     gap: 10px; /* Espace entre les détails */
     color: var(--dark-blue);
     font-family: 'Roboto', sans-serif;
+    backdrop-filter: none;
+    background-color: var(--light-blue-container-2);
+    box-shadow: none;
+    border-radius: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .box {
     color: var(--light-blue);
-    background-color: var(--dark-blue); /* Couleur de fond bleu clair */
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    background-color: var(--dark-blue);
     backdrop-filter: blur(1px);
     border-radius: 5px; /* Coins arrondis */
     padding: 10px; /* Espace intérieur */
-}
-/* width */
-::-webkit-scrollbar {
-width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-border-radius: 10px;
-background: var(--light-blue); 
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: var(--dark-blue); 
-    border-radius: 10px;
 }

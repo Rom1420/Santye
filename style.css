@@ -27,6 +27,7 @@ h1{
         8px 8px 0px rgba(16, 94, 164, 0.5);;
     transform: rotate(-15deg);
     font-size: 10vh;
+    cursor: pointer;
 }
 
 body{
@@ -60,6 +61,25 @@ p{
     margin: 0;
 }
 
+/* Pour Firefox */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: var(--dark-blue); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
 search-component .search-container.expanded .inputs-container{
     grid-template-rows: repeat(3, 1fr);
 }
@@ -94,8 +114,6 @@ search-component.map-displayed{
     display: flex;
     justify-content: center;
     width: 80%;
-    height: 10%;
-    margin-top: 20px;
 }
 
 search-component.map-displayed .main-title{
@@ -110,6 +128,7 @@ search-component.map-displayed .search-container.expanded{
     height: 30vh;
     backdrop-filter: none;
     background-color: var(--light-blue-container-2);
+    box-shadow: none;
 }
 
 search-component.map-displayed .transport-button{
@@ -119,6 +138,18 @@ search-component.map-displayed .transport-button-container{
     grid-template-rows: auto auto;
 }
 
+details-component{
+    width: 80%;
+}
+
+.separation-line {
+    content: '';
+    width: 60%;
+    border-radius: 20px;
+    background-color: var(--dark-blue);
+    margin: 20px auto;
+    padding: 2px;
+}
 
 .fas{
     font-size: xx-large;
@@ -287,6 +318,14 @@ search-component.map-displayed .transport-button-container{
     margin: 0; 
 }
 
+#scroll{
+    overflow-y: scroll;
+    display: flex;
+    margin: 30px 4px;
+    flex-direction: column;
+    align-items: center;
+}
+
 
 /* La transi entre les deux composants */
 
@@ -310,9 +349,4 @@ map-component {
 map-component.show {
     transform: scale(1);
     opacity: 1;
-}
-
-#scroll{
-    overflow-y: scroll;
-    margin: 17px 4px;
 }
