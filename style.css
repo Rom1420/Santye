@@ -57,8 +57,65 @@ p{
     color: var(--dark-blue);
     font-weight: 700;
     margin: 0;
-    padding: 10px;
 }
+
+search-component .search-container.expanded .inputs-container{
+    grid-template-rows: repeat(3, 1fr);
+}
+
+search-component input{
+    justify-items: center;
+}
+
+search-component.map-displayed .depart-container * {
+    max-height: 100%;
+}
+
+
+search-component.map-displayed .input {
+    grid-template: auto / 1fr auto;
+}
+
+search-component.map-displayed .inputs-container{
+    grid-template-rows: repeat(3, minmax(0,1fr));
+    margin: 10px 20px;
+}
+
+search-component.map-displayed .location-button > * {
+    max-height: fit-content;
+}
+
+search-component.map-displayed .location-button {
+    padding: 0px 10px;
+}
+
+search-component.map-displayed{
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    height: 10%;
+    margin-top: 20px;
+}
+
+search-component.map-displayed .main-title{
+    display: none;
+}
+
+search-component.map-displayed .fas{
+    font-size: small;
+}
+
+search-component.map-displayed .search-container.expanded{
+    height: 30vh;
+}
+
+search-component.map-displayed .transport-button{
+    height: auto;
+}
+search-component.map-displayed .transport-button-container{
+    grid-template-rows: auto auto;
+}
+
 
 .fas{
     font-size: xx-large;
@@ -67,9 +124,18 @@ p{
 }
 
 .fa-solid{
-    font-size: 2.5rem;
+    font-size: 200%;
     font-weight: bolder;
     color: var(--light-blue);
+}
+
+.main-container{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -113,6 +179,7 @@ p{
     /*transition: height 0.3s ease-in-out;*/
     transition: width 0.5s ease, border 0.5s ease, margin 0.5s ease;
     margin-right: 0; 
+    overflow: hidden;
 }
 
 .main-container.reduced .right-container {

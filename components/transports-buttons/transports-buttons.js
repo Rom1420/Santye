@@ -3,6 +3,10 @@ class TransportsButtons extends HTMLElement {
         super()
         const shadow = this.attachShadow({ mode: 'open' });
         this.render(shadow);
+
+        if (this.getAttribute('etat') === 'map-displayed') {
+            this.mapDisplayed();
+        }
     }
     render(shadow) {
         shadow.innerHTML = `
@@ -17,7 +21,15 @@ class TransportsButtons extends HTMLElement {
         `;    
     }
 
-    
+    mapDisplayed(){
+        this.classList.add('map-displayed');
+
+        const transportButtons = this.shadowRoot.querySelectorAll('transport-button');
+
+        transportButtons.forEach(button => {
+            button.setAttribute('etat', 'map-displayed');
+        });
+    }
 }
 
 customElements.define('transports-buttons', TransportsButtons);

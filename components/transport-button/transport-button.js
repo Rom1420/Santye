@@ -3,7 +3,12 @@ class TransportButton extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
         this.render(shadow);
+    
+        if (this.getAttribute('etat') === 'map-displayed') {
+            this.mapDisplayed();
+        }
     }
+    
 
     render(shadow) {
         const icon = this.getAttribute('icon') || 'fa-question';
@@ -20,6 +25,15 @@ class TransportButton extends HTMLElement {
                 <p class="time">${time} min</p>
             </div>
         `;
+    }
+
+    mapDisplayed(){
+        this.classList.add('map-displayed');
+        const faSolid = this.shadowRoot.querySelector('.fa-solid');
+        faSolid.classList.add('map-displayed');
+
+        const time = this.shadowRoot.querySelector('.time');
+        time.classList.add('map-displayed')
     }
 }
 

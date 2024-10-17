@@ -4,15 +4,15 @@ class SearchComponent extends HTMLElement {
         this.render();
         this.addEventListeners();
 
-        if (this.getAttribute('etat') === 'permute') {
-            this.addTransportsButtons(); 
+        if (this.getAttribute('etat') === 'map-displayed') {
+            this.mapDisplayed();
+            this.addTransportsButtons();
         }
     }
 
     render() {
         this.innerHTML = `
             <link rel="stylesheet" href="./components/search-component/style.css">
-            <div class="main-container">
                 <div class="search-container">
                     <h1 class="main-title">Santye</h1>
                     <div class="inputs-container">
@@ -37,7 +37,6 @@ class SearchComponent extends HTMLElement {
                         </div>
                     </div>
                 </div>
-            </div>
         `;
     }
 
@@ -53,6 +52,9 @@ class SearchComponent extends HTMLElement {
         const validationButton = this.querySelector('.validation-button')
 
         const newTransportsButtons = document.createElement('transports-buttons');
+        if (this.classList.contains('map-displayed')) {
+            newTransportsButtons.setAttribute('etat', 'map-displayed');
+        }
         inputsContainer.appendChild(newTransportsButtons);
         searchContainer.classList.add('expanded');
         destinationContainer.removeChild(validationButton);
@@ -72,6 +74,10 @@ class SearchComponent extends HTMLElement {
 
         destinationContainer.prepend(permuteButton);
         destinationContainer.classList.add('show-permute-button');
+    }
+
+    mapDisplayed(){
+        this.classList.add('map-displayed');
     }
 
     swapInputs() {
