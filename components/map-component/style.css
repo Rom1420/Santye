@@ -1,0 +1,129 @@
+
+
+.search-container{
+    position: relative;
+    background-color: var(--light-blue-container);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    width: 38vw;
+    height: 40vh; 
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    transition: height 0.3s ease-in-out;
+}
+
+.search-container.expanded{
+    height: 55vh;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .search-container {
+    width: 60%;
+    height: auto;
+  }
+}
+
+
+.main-title{
+    z-index: 10;
+    position: absolute;
+    top: -120px; 
+    transform: rotate(-10deg);  
+}
+
+.inputs-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr; 
+    grid-template-rows: repeat(2, 1fr);
+    width: 100%;
+    margin: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    align-items: center;
+}
+
+.depart-container {
+    border-radius: 10px;
+    width: 100%;
+    align-items: end;
+}
+
+.destination-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr auto;
+    border-radius: 10px;
+    gap: 30px;
+    align-items: center;
+    align-content: center;
+}
+
+.destination-container.show-permute-button {
+    grid-template-columns: auto 1fr;
+}
+
+.validation-button:hover, .location-button:hover{
+    transform: scale(1.04);
+}
+
+.location-button {
+    background-color: #BADAF1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    aspect-ratio: 1;
+    transition: 0.3s transform ease-in-out;
+}
+
+.input{
+    position: relative;
+    display: grid;
+    width: 100%;
+    grid-template: auto / 1fr 60px;
+    background-color: var(--dark-blue);
+    border-radius: 10px;
+    transition: 0.3s transform ease-in-out;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-font-smoothing: subpixel-antialiased;
+    padding: 10px;
+    align-items: center;
+    align-content: center;
+    font-size: 1.2rem;
+}
+
+.input input {
+    font-size: 1.2rem;   
+}
+
+.validation-button, .permute-button{
+    background-color: var(--light-blue);
+    aspect-ratio: 1;
+    height: 90%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s transform ease-in-out;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-font-smoothing: subpixel-antialiased;
+    cursor: pointer;
+}
+
+.button:hover{
+    transform: scale(1.04);
+}

@@ -3,11 +3,15 @@ class TransportsButtons extends HTMLElement {
         super()
         const shadow = this.attachShadow({ mode: 'open' });
         this.render(shadow);
+    }
 
+    connectedCallback() {
         if (this.getAttribute('etat') === 'map-displayed') {
+            console.log("wewe");
             this.mapDisplayed();
         }
     }
+
     render(shadow) {
         shadow.innerHTML = `
             <link rel="stylesheet" href="./components/transports-buttons/style.css">
