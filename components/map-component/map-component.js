@@ -40,11 +40,18 @@ class MapComponent extends HTMLElement {
     addEventListeners(){
         const toggleBtn = document.querySelector('.menu-button');
         const container = document.querySelector('.main-container');
-
+        const leftContainer = this.querySelector('.left-container');
         // Ajoute un événement de clic pour réduire/agrandir
         toggleBtn.addEventListener('click', () => {
             container.classList.toggle('reduced');
+            
+            if (container.classList.contains('reduced')) {
+                leftContainer.classList.remove('hidden'); 
+            } else {
+                leftContainer.classList.add('hidden'); 
+            }
         });
+        
     }
 }
 

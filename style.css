@@ -1,5 +1,6 @@
 :root{
     --light-blue-container: rgba(186, 218, 241, 0.55);
+    --light-blue-container-2: rgba(186, 218, 241, 0.3);
     --dark-blue: rgba(10, 34, 94, 1);
     --light-blue: #BADAF1;
 }
@@ -107,6 +108,8 @@ search-component.map-displayed .fas{
 
 search-component.map-displayed .search-container.expanded{
     height: 30vh;
+    backdrop-filter: none;
+    background-color: var(--light-blue-container-2);
 }
 
 search-component.map-displayed .transport-button{
@@ -177,9 +180,14 @@ search-component.map-displayed .transport-button-container{
     display: flex;
     justify-content: center;
     /*transition: height 0.3s ease-in-out;*/
-    transition: width 0.5s ease, border 0.5s ease, margin 0.5s ease;
+    transition: width 0.5s ease, border 0.5s ease, margin 0.5s ease, opacity 0.3s ease;
+    opacity: 1;
     margin-right: 0; 
     overflow: hidden;
+}
+
+.left-container.hidden {
+    opacity: 0; 
 }
 
 .main-container.reduced .right-container {
