@@ -311,3 +311,8 @@ map-component.show {
     transform: scale(1);
     opacity: 1;
 }
+
+#scroll{
+    overflow-y: scroll;
+    margin: 17px 4px;
+}
