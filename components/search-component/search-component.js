@@ -97,9 +97,12 @@ class SearchComponent extends HTMLElement {
     }
     replaceWithMapComponent() {
         const mapComponent = document.createElement('map-component');
-        this.parentNode.replaceChild(mapComponent, this);
-
-        mapComponent.connectedCallback();
+        this.classList.add('hide'); 
+        setTimeout(() => {
+            this.parentNode.replaceChild(mapComponent, this);
+            mapComponent.connectedCallback();
+        }, 500);
+        
     }
 }
 

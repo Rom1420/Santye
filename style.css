@@ -278,3 +278,28 @@ search-component.map-displayed .transport-button-container{
     font-size: 24px; 
     margin: 0; 
 }
+
+
+/* La transi entre les deux composants */
+
+search-component {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform: scale(1);
+    opacity: 1;
+}
+
+search-component.hide {
+    transform: scale(0);
+    opacity: 0;
+}
+
+map-component {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform: scale(0);
+    opacity: 0;
+}
+
+map-component.show {
+    transform: scale(1);
+    opacity: 1;
+}

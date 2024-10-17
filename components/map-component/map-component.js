@@ -6,6 +6,10 @@ class MapComponent extends HTMLElement {
     connectedCallback() {
         this.render();
         this.addEventListeners();
+        setTimeout(() => {
+            this.classList.add('show');
+        }, 1);
+        
     }
 
     render() {
