@@ -81,15 +81,50 @@ class SearchComponent extends HTMLElement {
     }
 
     addTransportsButtons(){
-        const inputsContainer = this.querySelector('.inputs-container'); 
-        const searchContainer = this.querySelector('.search-container');
-        const destinationContainer = this.querySelector('.destination-container');
-        const validationButton = this.querySelector('.validation-button')
+        const departValue = this.departInput.value.trim();
+        const destinationValue = this.destinationInput.value.trim();
 
+        this.validateItinerary(departValue, destinationValue)
+            .then(queueName => {
+                console.log("Itinerary queue name:", queueName);
+                this.createTransportButtons();
+                this.expandSearchContainer();
+                this.removeValidationButton();
+                this.createPermuteButton();
+            })
+            .catch(error => {
+                console.error("Error fetching itinerary:", error);
+            });
+    }
+
+    async validateItinerary(departure, destination) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const isDepartureValid = await this.validateAddress(departure);
+        const isDestinationValid = await this.validateAddress(destination);
+        console.log(isDepartureValid)
+
+        if (!isDepartureValid ) {
+            this.wrongInput("depart");
+        }
+        
+        if (!isDestinationValid ) {
+            this.wrongInput("destination");
+        }
+
+        if(!isDepartureValid || !isDestinationValid){
+            throw new Error("Invalid addresses: Please provide valid Departure address.");
+        }
+            this.correctInputs();
+            return "itineraryQueue"; 
+        }
+
+    createTransportButtons() {
+        const inputsContainer = this.querySelector('.inputs-container');
         const newTransportsButtons = document.createElement('transports-buttons');
 
-        newTransportsButtons.addEventListener('click', (event) => {
-        if (!this.classList.contains('map-displayed')) {
+        newTransportsButtons.addEventListener('click', () => {
+            if (!this.classList.contains('map-displayed')) {
                 this.replaceWithMapComponent();
             }
         });
@@ -97,10 +132,23 @@ class SearchComponent extends HTMLElement {
         if (this.classList.contains('map-displayed')) {
             newTransportsButtons.setAttribute('etat', 'map-displayed');
         }
+        
         inputsContainer.appendChild(newTransportsButtons);
-        searchContainer.classList.add('expanded');
-        destinationContainer.removeChild(validationButton);
+    }
 
+    expandSearchContainer() {
+        const searchContainer = this.querySelector('.search-container');
+        searchContainer.classList.add('expanded');
+    }
+
+    removeValidationButton() {
+        const destinationContainer = this.querySelector('.destination-container');
+        const validationButton = this.querySelector('.validation-button');
+        destinationContainer.removeChild(validationButton);
+    }
+
+    createPermuteButton() {
+        const destinationContainer = this.querySelector('.destination-container');
         const permuteButton = document.createElement('div');
         permuteButton.classList.add('permute-button');
 
@@ -108,7 +156,6 @@ class SearchComponent extends HTMLElement {
         const icon = document.createElement('i');
         icon.className = 'fas fa-repeat'; 
 
-        
         span.appendChild(icon);
         permuteButton.appendChild(span);
 
@@ -231,6 +278,29 @@ class SearchComponent extends HTMLElement {
                 destinationContainer.prepend(positionComponent);
             }
         }
+    }
+
+    async validateAddress(address){
+        try {
+        const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${address}`);
+        const data = await response.json();
+        return data.features.length > 0; 
+        } catch (error) {
+            console.error('Error validating address:', error);
+            return false; 
+        }
+    }
+
+    wrongInput(type){
+        if(type === 'depart'){
+            this.querySelector('.depart-container .input').classList.add('wrong')
+        }
+        this.querySelector('.destination-container .input').classList.add('wrong')
+    }
+
+    correctInputs(){
+        this.querySelector('.destination-container .input').classList.remove('wrong')
+        this.querySelector('.depart-container .input').classList.remove('wrong')
     }
 
 }
