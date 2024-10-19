@@ -50,6 +50,7 @@ class PositionComponent extends HTMLElement {
                         composed: true,
                         
                     }));
+                    this.remove();
                 },
                 (error) => {
                     switch (error.code) {
