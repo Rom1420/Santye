@@ -1,18 +1,20 @@
 class MapComponent extends HTMLElement {
     constructor() {
         super();
+        this.departValue = '';
+        this.destinationValue = '';
         
     }
-    connectedCallback(departValue, destinationValue) {
+    connectedCallback() {
         this.render();
-        this.addEventListeners();
-        const searchComponent = this.querySelector('search-component');
-        searchComponent.setInputValue('depart', departValue);
-        searchComponent.setInputValue('destination', destinationValue);
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
-        
+    }
+
+    setValues(departValue, destinationValue) {
+        this.departValue = departValue;
+        this.destinationValue = destinationValue;
     }
 
     render() {
@@ -23,7 +25,7 @@ class MapComponent extends HTMLElement {
             <div class="main-container">
             <div class="left-container">
                 <div id="scroll">
-                    <search-component etat="map-displayed"></search-component>
+                    <search-component etat="map-displayed"></search-component> 
                     <div class="separation-line"></div>
                     <details-component></details-component>
                 </div>
@@ -45,7 +47,9 @@ class MapComponent extends HTMLElement {
                 </div>
             </div>
         `;
+        this.addEventListeners();   
     }
+
     addEventListeners(){
         const toggleBtn = document.querySelector('.menu-button');
         const container = document.querySelector('.main-container');
@@ -61,6 +65,13 @@ class MapComponent extends HTMLElement {
             }
         });
         
+    }
+
+    getDepartValue(){
+        return this.departValue;
+    }
+    getDestinationValue(){
+        return this.destinationValue;
     }
 }
 

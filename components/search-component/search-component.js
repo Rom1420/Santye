@@ -3,7 +3,6 @@ class SearchComponent extends HTMLElement {
         super();
         this.render();
         
-        
         this.departInput = this.querySelector('.depart-container input');
         this.destinationInput = this.querySelector('.destination-container input');
 
@@ -20,6 +19,7 @@ class SearchComponent extends HTMLElement {
 
         if (this.getAttribute('etat') === 'map-displayed') {
             this.mapDisplayed();
+            this.fetchAndSetInputsFromMap();
             this.addTransportsButtons();
         }
     }
@@ -86,11 +86,11 @@ class SearchComponent extends HTMLElement {
 
         this.validateItinerary(departValue, destinationValue)
             .then(queueName => {
-                console.log("Itinerary queue name:", queueName);
                 this.createTransportButtons();
                 this.expandSearchContainer();
                 this.removeValidationButton();
                 this.createPermuteButton();
+                this.correctInputs();
             })
             .catch(error => {
                 console.error("Error fetching itinerary:", error);
@@ -100,9 +100,15 @@ class SearchComponent extends HTMLElement {
     async validateItinerary(departure, destination) {
         await new Promise(resolve => setTimeout(resolve, 1000));
 
+        const isDepartureGPS = this.isValidCoordinates(departure);
+        const isDestinationGPS = this.isValidCoordinates(destination);
+
+        if (isDepartureGPS && isDestinationGPS) {
+            return "itineraryQueue";
+        }
+
         const isDepartureValid = await this.validateAddress(departure);
         const isDestinationValid = await this.validateAddress(destination);
-        console.log(isDepartureValid)
 
         if (!isDepartureValid ) {
             this.wrongInput("depart");
@@ -132,8 +138,9 @@ class SearchComponent extends HTMLElement {
         if (this.classList.contains('map-displayed')) {
             newTransportsButtons.setAttribute('etat', 'map-displayed');
         }
-        
-        inputsContainer.appendChild(newTransportsButtons);
+        if(!this.querySelector('transports-buttons')){
+            inputsContainer.appendChild(newTransportsButtons);
+        }
     }
 
     expandSearchContainer() {
@@ -144,11 +151,14 @@ class SearchComponent extends HTMLElement {
     removeValidationButton() {
         const destinationContainer = this.querySelector('.destination-container');
         const validationButton = this.querySelector('.validation-button');
-        destinationContainer.removeChild(validationButton);
+        if(validationButton){
+            destinationContainer.removeChild(validationButton);
+        }
     }
 
     createPermuteButton() {
-        const destinationContainer = this.querySelector('.destination-container');
+        if(!this.querySelector('permute-button')){
+            const destinationContainer = this.querySelector('.destination-container');
         const permuteButton = document.createElement('div');
         permuteButton.classList.add('permute-button');
 
@@ -166,8 +176,13 @@ class SearchComponent extends HTMLElement {
 
         const departContainerInput = this.querySelector('.depart-container .input');
         const destinationContainerInput = this.querySelector('.destination-container .input');
-        departContainerInput.removeChild(departContainerInput.querySelector('position-component'));
-        destinationContainerInput.removeChild(destinationContainerInput.querySelector('position-component'));
+        if(departContainerInput.querySelector('position-component')){
+            departContainerInput.removeChild(departContainerInput.querySelector('position-component'));
+        }
+        if(destinationContainerInput.querySelector('position-component')){
+            destinationContainerInput.removeChild(destinationContainerInput.querySelector('position-component'));
+        }
+        }
     }
 
     mapDisplayed(){
@@ -184,20 +199,21 @@ class SearchComponent extends HTMLElement {
     }
     replaceWithMapComponent() {
         const mapComponent = document.createElement('map-component');
-        const departValue = this.departInput.value; // Sauvegarde des valeurs
+        const departValue = this.departInput.value; 
         const destinationValue = this.destinationInput.value;
 
         this.classList.add('hide'); 
         setTimeout(() => {
+            mapComponent.setValues(departValue, destinationValue);
             this.parentNode.replaceChild(mapComponent, this);
-            mapComponent.connectedCallback(departValue, destinationValue);
+            mapComponent.connectedCallback();
         }, 500);
         
     }
 
 
     async handleInputChange(inputValue, autocompleteList) {
-        if (inputValue.length < 3) { 
+        if (inputValue.length < 4) { 
             autocompleteList.innerHTML = '';
             autocompleteList.style.display = "none";
             return;
@@ -206,13 +222,14 @@ class SearchComponent extends HTMLElement {
         try {
             const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputValue}`);
             const data = await response.json();
-            if (data.features.length > 0) {
-            autocompleteList.style.display = 'flex';  
+
+            if (data && data.features && data.features.length > 0) {
+                autocompleteList.style.display = 'flex';
             } else {
-                autocompleteList.style.display = 'none';  
+                autocompleteList.style.display = 'none';
             }
-            
-            this.updateAutocompleteList(data.features, autocompleteList);
+
+            this.updateAutocompleteList(data.features || [], autocompleteList);
         } catch (error) {
             console.error('Erreur lors de la récupération des données:', error);
         }
@@ -281,14 +298,31 @@ class SearchComponent extends HTMLElement {
     }
 
     async validateAddress(address){
-        try {
-        const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${address}`);
-        const data = await response.json();
-        return data.features.length > 0; 
-        } catch (error) {
-            console.error('Error validating address:', error);
-            return false; 
+        if(address){
+            try {
+                const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${address}`);
+                const data = await response.json();
+                return data.features.length > 0; 
+            } catch (error) {
+                console.error('Error validating address:', error);
+                return false; 
+            }
         }
+    }
+
+    isValidCoordinates(coords) {
+        const pattern = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/; 
+        const match = coords.match(pattern);
+
+        if (match) {
+            const latitude = parseFloat(match[1]);
+            const longitude = parseFloat(match[3]);
+            return (
+                latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180
+            );
+        }
+
+        return false;
     }
 
     wrongInput(type){
@@ -301,6 +335,17 @@ class SearchComponent extends HTMLElement {
     correctInputs(){
         this.querySelector('.destination-container .input').classList.remove('wrong')
         this.querySelector('.depart-container .input').classList.remove('wrong')
+    }
+
+    fetchAndSetInputsFromMap(){
+        const mapComponent = document.querySelector('map-component');
+
+        if (mapComponent) {
+            this.departInput.value = mapComponent.getDepartValue();
+            this.destinationInput.value = mapComponent.getDestinationValue();
+        } else {
+            console.error('MapComponent non trouvé.');
+        }
     }
 
 }
