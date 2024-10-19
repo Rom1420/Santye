@@ -86,6 +86,7 @@ class PositionComponent extends HTMLElement {
             await searchComponent.replaceWithMapComponent();
             this.attachLocationSelectedListener(searchComponent);
         }
+        document.querySelector('.ping-on-map').classList.remove('hide');
         this.eventPingOnMap();
     }
 
@@ -115,7 +116,8 @@ class PositionComponent extends HTMLElement {
                     bubbles: true,
                     composed: true
                 }));
-
+                document.querySelector('.ping-on-map').classList.add('hide');
+                document.querySelector('.main-container').classList.add('reduced');
                 this.remove();
             }, { once: true }); 
         }

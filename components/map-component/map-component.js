@@ -33,6 +33,9 @@ class MapComponent extends HTMLElement {
             <link rel="stylesheet" href="./components/map-component/style.css">
             <link rel="stylesheet" href="./components/details-component/style.css">
             <div class="main-container">
+            <div class="ping-on-map hide">
+                Choississez un point sur la carte
+            </div>
             <div class="left-container">
                 <div id="scroll">
                     <search-component etat="map-displayed"></search-component> 

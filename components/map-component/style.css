@@ -129,4 +129,24 @@
     transform: scale(1.04);
 }
 
+.ping-on-map{
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    z-index: 10;
+    top: 7%;
+    left: 70%;
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+}
 
+.ping-on-map.hide{
+    display: none;
+}

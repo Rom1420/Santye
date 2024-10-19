@@ -20,7 +20,6 @@ class SearchComponent extends HTMLElement {
         if (this.getAttribute('etat') === 'map-displayed') {
             this.mapDisplayed();
             this.fetchAndSetInputsFromMap();
-            this.addTransportsButtons();
         }
     }
 
@@ -96,7 +95,6 @@ class SearchComponent extends HTMLElement {
     addTransportsButtons(){
         const departValue = this.departInput.value.trim();
         const destinationValue = this.destinationInput.value.trim();
-        if(!document.querySelector('map-component')){
             this.validateItinerary(departValue, destinationValue)
             .then(queueName => {
                 this.createTransportButtons();
@@ -108,13 +106,6 @@ class SearchComponent extends HTMLElement {
             .catch(error => {
                 console.error("Error fetching itinerary:", error);
             });
-        }else{
-            this.createTransportButtons();
-            this.expandSearchContainer();
-            this.removeValidationButton();
-            this.createPermuteButton();
-            this.correctInputs();
-        }   
     }
 
     async validateItinerary(departure, destination) {
