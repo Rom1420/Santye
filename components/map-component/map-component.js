@@ -7,6 +7,7 @@ class MapComponent extends HTMLElement {
     }
     connectedCallback() {
         this.render();
+        this.initMap();
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
@@ -38,7 +39,7 @@ class MapComponent extends HTMLElement {
                     <div class="icon-bar"></div>
                 </button>
                 <div class="map-container">
-                    <img src="./assets/pics/map.png" class="map">
+                    <div class="map" id="map"></div>
                 </div>
                 <div class="eta-container">
                     <img src="./assets/pics/clock.png" alt="ETA" id="clock">
@@ -54,7 +55,6 @@ class MapComponent extends HTMLElement {
         const toggleBtn = document.querySelector('.menu-button');
         const container = document.querySelector('.main-container');
         const leftContainer = this.querySelector('.left-container');
-        // Ajoute un événement de clic pour réduire/agrandir
         toggleBtn.addEventListener('click', () => {
             container.classList.toggle('reduced');
             
@@ -70,8 +70,54 @@ class MapComponent extends HTMLElement {
     getDepartValue(){
         return this.departValue;
     }
+
     getDestinationValue(){
         return this.destinationValue;
+    }
+
+    initMap() {
+        const map = L.map('map').setView([51.505, -0.09], 13);  
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let coords;
+        if (typeof this.departValue === 'string' && this.departValue.includes(',')) {
+            coords = this.departValue.split(',').map(coord => parseFloat(coord.trim()));
+        } else if (Array.isArray(this.departValue) && this.departValue.length === 2) {
+            coords = this.departValue;  
+        }
+
+        if (coords && coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+            map.setView(coords, 13);
+            L.marker(coords).addTo(map);
+        } else {
+            console.log("adress", this.departValue)
+            this.geocodeAddress(this.departValue, map);
+        }
+    }
+
+    geocodeAddress(address, map) {
+        const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(geocodeUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    const coords = [lat, lon];
+
+                    map.setView(coords, 13);
+                    L.marker(coords).addTo(map);
+                } else {
+                    console.error('Aucune correspondance trouvée pour l\'adresse.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors du géocodage :', error);
+            });
     }
 }
 
