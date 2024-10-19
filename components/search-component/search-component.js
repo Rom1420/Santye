@@ -116,10 +116,13 @@ class SearchComponent extends HTMLElement {
     }
     replaceWithMapComponent() {
         const mapComponent = document.createElement('map-component');
+        const departValue = this.departInput.value; // Sauvegarde des valeurs
+        const destinationValue = this.destinationInput.value;
+
         this.classList.add('hide'); 
         setTimeout(() => {
             this.parentNode.replaceChild(mapComponent, this);
-            mapComponent.connectedCallback();
+            mapComponent.connectedCallback(departValue, destinationValue);
         }, 500);
         
     }
@@ -168,6 +171,15 @@ class SearchComponent extends HTMLElement {
 
             autocompleteList.appendChild(li);
         });
+    }
+
+    setInputValue(inputType, value){
+        if(inputType == "depart"){
+            this.departInput.value = value;
+        }
+        else{
+            this.destinationInput.value = value;
+        }
     }
 
 }

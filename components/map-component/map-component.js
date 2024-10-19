@@ -3,9 +3,13 @@ class MapComponent extends HTMLElement {
         super();
         
     }
-    connectedCallback() {
+    connectedCallback(departValue, destinationValue) {
         this.render();
         this.addEventListeners();
+        const searchComponent = this.querySelector('search-component');
+        searchComponent.setInputValue('depart', departValue);
+        searchComponent.setInputValue('destination', destinationValue);
+        console.log(departValue, destinationValue)
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
