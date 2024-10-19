@@ -2,6 +2,22 @@ class SearchComponent extends HTMLElement {
     constructor() {
         super();
         this.render();
+        
+        
+        this.departInput = this.querySelector('.depart-container input');
+        this.destinationInput = this.querySelector('.destination-container input');
+
+        console.log(this.destinationInput, this.departInput)
+
+        this.autocompleteListDepart = document.createElement('ul'); 
+        this.autocompleteListDepart.classList.add('autocomplete-list');
+        
+        this.autocompleteListDestination = document.createElement('ul'); 
+        this.autocompleteListDestination.classList.add('autocomplete-list');
+
+        this.departInput.parentNode.appendChild(this.autocompleteListDepart);
+        this.destinationInput.parentNode.appendChild(this.autocompleteListDestination);
+
         this.addEventListeners();
 
         if (this.getAttribute('etat') === 'map-displayed') {
@@ -43,6 +59,9 @@ class SearchComponent extends HTMLElement {
     addEventListeners() {
         const validationButton = this.querySelector('.validation-button');
         validationButton.addEventListener('click', () => this.addTransportsButtons());
+
+        this.departInput.addEventListener('input', () => this.handleInputChange(this.departInput.value, this.autocompleteListDepart));
+        this.destinationInput.addEventListener('input', () => this.handleInputChange(this.destinationInput.value, this.autocompleteListDestination));
     }
 
     addTransportsButtons(){
@@ -104,6 +123,53 @@ class SearchComponent extends HTMLElement {
         }, 500);
         
     }
+
+
+    async handleInputChange(inputValue, autocompleteList) {
+        if (inputValue.length < 3) { 
+            autocompleteList.innerHTML = '';
+            autocompleteList.style.display = "none";
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputValue}`);
+            const data = await response.json();
+            if (data.features.length > 0) {
+            autocompleteList.style.display = 'flex';  
+            } else {
+                autocompleteList.style.display = 'none';  
+            }
+            
+            this.updateAutocompleteList(data.features, autocompleteList);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données:', error);
+        }
+    }
+
+    updateAutocompleteList(features, autocompleteList) {
+        autocompleteList.innerHTML = '';
+
+        features.forEach(feature => {
+            const li = document.createElement('li');
+            li.textContent = feature.properties.label;
+
+            li.addEventListener('click', () => {
+                if(autocompleteList === this.autocompleteListDepart){
+                    console.log("hehe")
+                    this.departInput.value = feature.properties.label;
+                }
+                else{
+                    this.destinationInput.value = feature.properties.label;
+                }
+                autocompleteList.innerHTML = ''; 
+                autocompleteList.style.display = "none";
+            });
+
+            autocompleteList.appendChild(li);
+        });
+    }
+
 }
 
 customElements.define('search-component', SearchComponent);

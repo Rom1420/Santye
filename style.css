@@ -88,6 +88,8 @@ search-component input{
     justify-items: center;
 }
 
+
+
 search-component.map-displayed .depart-container * {
     max-height: 100%;
 }
@@ -95,6 +97,11 @@ search-component.map-displayed .depart-container * {
 
 search-component.map-displayed .input {
     grid-template: auto / 1fr auto;
+    font-size: 0.8rem;
+}
+
+search-component.map-displayed input, .autocomplete-list {
+    font-size: 0.8rem;
 }
 
 search-component.map-displayed .inputs-container{
