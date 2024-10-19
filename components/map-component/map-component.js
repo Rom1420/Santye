@@ -9,7 +9,6 @@ class MapComponent extends HTMLElement {
         const searchComponent = this.querySelector('search-component');
         searchComponent.setInputValue('depart', departValue);
         searchComponent.setInputValue('destination', destinationValue);
-        console.log(departValue, destinationValue)
         setTimeout(() => {
             this.classList.add('show');
         }, 1);

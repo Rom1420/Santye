@@ -7,7 +7,6 @@ class TransportsButtons extends HTMLElement {
 
     connectedCallback() {
         if (this.getAttribute('etat') === 'map-displayed') {
-            console.log("wewe");
             this.mapDisplayed();
         }
     }

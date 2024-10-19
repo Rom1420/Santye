@@ -1,7 +1,6 @@
 class DetailsComponent extends HTMLElement {
     constructor() {
         super()
-        console.log("dans le component");
         const shadow = this.attachShadow({ mode: 'open' });
         this.render(shadow);
         this.addDetails("Marcher 800m",false);

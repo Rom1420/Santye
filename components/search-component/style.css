@@ -57,9 +57,11 @@
     width: 100%;
     align-items: end;
     z-index: 10;
+    position: relative;
 }
 
 .destination-container {
+    position: relative;
     display: grid;
     width: 100%;
     grid-template-columns: 1fr auto;

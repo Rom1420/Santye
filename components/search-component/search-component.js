@@ -7,8 +7,6 @@ class SearchComponent extends HTMLElement {
         this.departInput = this.querySelector('.depart-container input');
         this.destinationInput = this.querySelector('.destination-container input');
 
-        console.log(this.destinationInput, this.departInput)
-
         this.autocompleteListDepart = document.createElement('ul'); 
         this.autocompleteListDepart.classList.add('autocomplete-list');
         
@@ -60,8 +58,26 @@ class SearchComponent extends HTMLElement {
         const validationButton = this.querySelector('.validation-button');
         validationButton.addEventListener('click', () => this.addTransportsButtons());
 
+        // Pour l'autocomplétion
         this.departInput.addEventListener('input', () => this.handleInputChange(this.departInput.value, this.autocompleteListDepart));
         this.destinationInput.addEventListener('input', () => this.handleInputChange(this.destinationInput.value, this.autocompleteListDestination));
+        
+        // Pour la position
+        const locationButtonDepart = this.querySelector('.depart-container .location-button');
+        locationButtonDepart.addEventListener('click', () => this.addPositionComponent('depart'));
+
+        const locationButtonDestination = this.querySelector('.destination-container .location-button');
+        locationButtonDestination.addEventListener('click', () => this.addPositionComponent('destination'));
+
+        this.addEventListener('location-found', (event) => {
+            const { latitude, longitude, type } = event.detail;
+            if(type === 'depart'){
+                this.setInputValue('depart', ` ${latitude}, ${longitude}`); 
+            } else {
+                this.setInputValue('destination', ` ${latitude}, ${longitude}`); 
+            }
+            
+        });
     }
 
     addTransportsButtons(){
@@ -100,6 +116,11 @@ class SearchComponent extends HTMLElement {
 
         destinationContainer.prepend(permuteButton);
         destinationContainer.classList.add('show-permute-button');
+
+        const departContainerInput = this.querySelector('.depart-container .input');
+        const destinationContainerInput = this.querySelector('.destination-container .input');
+        departContainerInput.removeChild(departContainerInput.querySelector('position-component'));
+        destinationContainerInput.removeChild(destinationContainerInput.querySelector('position-component'));
     }
 
     mapDisplayed(){
@@ -159,7 +180,6 @@ class SearchComponent extends HTMLElement {
 
             li.addEventListener('click', () => {
                 if(autocompleteList === this.autocompleteListDepart){
-                    console.log("hehe")
                     this.departInput.value = feature.properties.label;
                 }
                 else{
@@ -179,6 +199,37 @@ class SearchComponent extends HTMLElement {
         }
         else{
             this.destinationInput.value = value;
+        }
+    }
+
+    addPositionComponent(type){
+        const departContainer = this.querySelector('.depart-container .input');
+        const destinationContainer = this.querySelector('.destination-container .input');
+        const existingDepartComponent = departContainer.querySelector('position-component')
+        const existingDestinationComponent = destinationContainer.querySelector('position-component');
+
+        if (type === 'depart') {
+            if (existingDestinationComponent) {
+                destinationContainer.removeChild(existingDestinationComponent);
+            }
+            if (existingDepartComponent) {
+                departContainer.removeChild(existingDepartComponent);
+            } else {
+                const positionComponent = document.createElement('position-component');
+                positionComponent.setAttribute('data-type', 'depart');
+                departContainer.prepend(positionComponent);
+            }
+        } else if (type === 'destination') {
+            if (existingDepartComponent) {
+                departContainer.removeChild(existingDepartComponent);
+            }
+            if (existingDestinationComponent) {
+                destinationContainer.removeChild(existingDestinationComponent);
+            } else {
+                const positionComponent = document.createElement('position-component');
+                positionComponent.setAttribute('data-type', 'destination');
+                destinationContainer.prepend(positionComponent);
+            }
         }
     }
 
