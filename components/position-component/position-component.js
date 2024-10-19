@@ -35,6 +35,11 @@ class PositionComponent extends HTMLElement {
         locationElement.addEventListener('click', () => {
             this.getLocation(); 
         });
+
+        const pointOnMap = this.shadowRoot.querySelector('.choose-on-map');
+        pointOnMap.addEventListener('click', () => {
+            this.pingOnMap(); 
+        });
     }
 
     getLocation() {
@@ -71,6 +76,48 @@ class PositionComponent extends HTMLElement {
             );
         } else {
             alert("La géolocalisation n'est pas prise en charge par ce navigateur.");
+        }
+    }
+
+    async pingOnMap(){
+        const searchComponent = document.querySelector('search-component');
+        
+        if(!searchComponent.classList.contains('map-displayed')){
+            await searchComponent.replaceWithMapComponent();
+            this.attachLocationSelectedListener(searchComponent);
+        }
+        this.eventPingOnMap();
+    }
+
+    attachLocationSelectedListener(oldSearchComponent) {
+        const newSearchComponent = document.querySelector('search-component');
+
+        if (newSearchComponent && oldSearchComponent) {
+            oldSearchComponent.addEventListener('location-selected', (event) => {
+                const { latitude, longitude, type } = event.detail;
+
+                newSearchComponent.setInputValue(type, `${latitude}, ${longitude}`);
+            }, { once: true }); 
+        }
+    }
+
+    eventPingOnMap(){
+        const mapComponent = document.querySelector('map-component');
+    
+        if (mapComponent) {
+            mapComponent.addEventListener('map-pinged', (event) => {
+                console.log(this.getAttribute('data-type'))
+                const { latitude, longitude } = event.detail;
+                const type = this.getAttribute('data-type'); 
+
+                this.dispatchEvent(new CustomEvent('location-selected', {
+                    detail: { latitude, longitude, type },
+                    bubbles: true,
+                    composed: true
+                }));
+
+                this.remove();
+            }, { once: true }); 
         }
     }
 }

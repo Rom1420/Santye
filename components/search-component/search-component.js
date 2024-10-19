@@ -78,13 +78,26 @@ class SearchComponent extends HTMLElement {
             }
             
         });
+
+        this.addEventListener('location-selected', (event) => {
+            console.log(this)
+            console.log('location selected')
+            const { latitude, longitude, type } = event.detail;
+            const mapComponent = document.querySelector('map-component');
+            mapComponent.setLocation(type, ` ${latitude}, ${longitude}`)
+            this.setInputValue(type, `${latitude}, ${longitude}`);
+            console.log(this.departInput.value)
+        });
+
+
+    
     }
 
     addTransportsButtons(){
         const departValue = this.departInput.value.trim();
         const destinationValue = this.destinationInput.value.trim();
-
-        this.validateItinerary(departValue, destinationValue)
+        if(!document.querySelector('map-component')){
+            this.validateItinerary(departValue, destinationValue)
             .then(queueName => {
                 this.createTransportButtons();
                 this.expandSearchContainer();
@@ -95,6 +108,13 @@ class SearchComponent extends HTMLElement {
             .catch(error => {
                 console.error("Error fetching itinerary:", error);
             });
+        }else{
+            this.createTransportButtons();
+            this.expandSearchContainer();
+            this.removeValidationButton();
+            this.createPermuteButton();
+            this.correctInputs();
+        }   
     }
 
     async validateItinerary(departure, destination) {
@@ -198,17 +218,20 @@ class SearchComponent extends HTMLElement {
         destinationInput.value = temp;
     }
     replaceWithMapComponent() {
-        const mapComponent = document.createElement('map-component');
-        const departValue = this.departInput.value; 
-        const destinationValue = this.destinationInput.value;
+        return new Promise((resolve) => { 
+            const mapComponent = document.createElement('map-component');
+            const departValue = this.departInput.value; 
+            const destinationValue = this.destinationInput.value;
 
-        this.classList.add('hide'); 
-        setTimeout(() => {
-            mapComponent.setValues(departValue, destinationValue);
-            this.parentNode.replaceChild(mapComponent, this);
-            mapComponent.connectedCallback();
-        }, 500);
-        
+            this.classList.add('hide'); 
+            setTimeout(() => {
+                mapComponent.setValues(departValue, destinationValue);
+                this.parentNode.replaceChild(mapComponent, this);
+                mapComponent.connectedCallback();
+
+                resolve(); 
+            }, 500);
+        });
     }
 
 

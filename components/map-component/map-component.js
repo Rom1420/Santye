@@ -3,6 +3,7 @@ class MapComponent extends HTMLElement {
         super();
         this.departValue = '';
         this.destinationValue = '';
+        this.map = null;
         
     }
     connectedCallback() {
@@ -16,6 +17,14 @@ class MapComponent extends HTMLElement {
     setValues(departValue, destinationValue) {
         this.departValue = departValue;
         this.destinationValue = destinationValue;
+    }
+
+    setLocation(type, location) {
+        if(type === 'depart'){
+            this.departValue = location;
+        } else {
+            this.destinationValue = location;
+        }
     }
 
     render() {
@@ -76,11 +85,11 @@ class MapComponent extends HTMLElement {
     }
 
     initMap() {
-        const map = L.map('map').setView([51.505, -0.09], 13);  
+        this.map = L.map('map').setView([51.505, -0.09], 13);  
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        }).addTo(this.map);
 
         let coords;
         if (typeof this.departValue === 'string' && this.departValue.includes(',')) {
@@ -90,12 +99,22 @@ class MapComponent extends HTMLElement {
         }
 
         if (coords && coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
-            map.setView(coords, 13);
-            L.marker(coords).addTo(map);
+            this.map.setView(coords, 13);
+            L.marker(coords).addTo(this.map);
         } else {
             console.log("adress", this.departValue)
-            this.geocodeAddress(this.departValue, map);
+            this.geocodeAddress(this.departValue,this.map);
         }
+
+         this.map.on('click', (event) => {
+            const { lat, lng } = event.latlng;
+            console.log(lat, lng)
+            this.dispatchEvent(new CustomEvent('map-pinged', {
+                detail: { latitude: lat, longitude: lng },
+                bubbles: true,
+                composed: true
+            }));
+        });
     }
 
     geocodeAddress(address, map) {
