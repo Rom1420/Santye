@@ -109,7 +109,7 @@ class SearchComponent extends HTMLElement {
     }
 
     async validateItinerary(departure, destination) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const isDepartureGPS = this.isValidCoordinates(departure);
         const isDestinationGPS = this.isValidCoordinates(destination);
