@@ -109,13 +109,11 @@ class SearchComponent extends HTMLElement {
     }
 
     async validateItinerary(departure, destination) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-
         const isDepartureGPS = this.isValidCoordinates(departure);
         const isDestinationGPS = this.isValidCoordinates(destination);
 
         if (isDepartureGPS && isDestinationGPS) {
-            return "itineraryQueue";
+           return await this.fetchItinerary(departure, destination);
         }
 
         const isDepartureValid = await this.validateAddress(departure);
@@ -133,7 +131,11 @@ class SearchComponent extends HTMLElement {
             throw new Error("Invalid addresses: Please provide valid Departure address.");
         }
             this.correctInputs();
-            return "itineraryQueue"; 
+            const coordinatesDeparture = await this.getCoordinatesFromAddress(departure);
+            const coordinatesDestination = await this.getCoordinatesFromAddress(destination);
+
+            console.log(coordinatesDeparture, coordinatesDestination)
+            return await this.fetchItinerary(coordinatesDeparture, coordinatesDestination);
         }
 
     createTransportButtons() {
@@ -359,6 +361,88 @@ class SearchComponent extends HTMLElement {
             this.destinationInput.value = mapComponent.getDestinationValue();
         } else {
             console.error('MapComponent non trouvé.');
+        }
+    }
+
+
+    async fetchItinerary(departure, destination) {
+        // check et conversion des coordonnées
+        const splitCoordinates = (coord) => {
+            const [lon, lat] = coord.split(',').map(Number); // Convertir en nombres
+            return [lon, lat];
+        };
+
+        // Check et conversion les coordonnées de départ et d'arrivée
+        const departureCoordinate = Array.isArray(departure) ? departure : splitCoordinates(departure);
+        const destinationCoordinate = Array.isArray(destination) ? destination : splitCoordinates(destination);
+
+        console.log("Departure coordinates:", departureCoordinate);
+        console.log("Destination coordinates:", destinationCoordinate);
+
+        // Check que les coordonnées sont dans le bon ordre [longitude, latitude]
+        const departureLonLat = departureCoordinate.length === 2 ? departureCoordinate : [departureCoordinate[1], departureCoordinate[0]];
+        const destinationLonLat = destinationCoordinate.length === 2 ? destinationCoordinate : [destinationCoordinate[1], destinationCoordinate[0]];
+
+        console.log("Final Departure coordinates:", departureLonLat);
+        console.log("Final Destination coordinates:", destinationLonLat);
+
+        try {
+            const response = await fetch(
+                "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
+                        "Content-Type": "application/json",
+                        "Authorization": "5b3ce3597851110001cf62480c8234b09f1441898dd7ee417b09d025"
+                    },
+                    body: JSON.stringify({
+                        coordinates: [departureLonLat, destinationLonLat],
+                        instructions: true
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                const errorDetails = await response.text();
+                throw new Error(`Erreur lors de la requête : ${response.status} - ${response.statusText}\nDétails : ${errorDetails}`);
+            }
+
+            const data = await response.json();
+            const steps = data.features[0]?.properties?.segments[0]?.steps || [];
+
+            steps.forEach((step) => {
+                console.log(`Instruction: ${step.instruction}, Distance: ${step.distance}m`);
+            });
+
+            return steps;
+        } catch (error) {
+            console.error("Erreur dans fetchItinerary :", error.message);
+            throw error;
+        }
+}
+
+
+    async getCoordinatesFromAddress(address) {
+        const apiKey = "5b3ce3597851110001cf62480c8234b09f1441898dd7ee417b09d025"; 
+        const url = `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(address)}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch coordinates for address: ${address}`);
+            }
+            const data = await response.json();
+
+            if (!data.features || data.features.length === 0) {
+                throw new Error(`No coordinates found for address: ${address}`);
+            }
+
+            const [longitude, latitude] = data.features[0].geometry.coordinates;
+            return `${longitude},${latitude}`;
+        } catch (error) {
+            console.error("Error fetching coordinates:", error);
+            throw error;
         }
     }
 
