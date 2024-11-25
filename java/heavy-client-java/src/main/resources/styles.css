@@ -1,0 +1,55 @@
+/* styles.css */
+
+/* Style général pour la fenêtre */
+.root {
+    -fx-background-image: url("images/background.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-padding: 20px;
+}
+
+.title-label{
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+/* Style des champs de texte */
+.text-field {
+    -fx-font-size: 14px;
+    -fx-padding: 8px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-background-color: rgba(10, 34, 94, 1);
+    -fx-text-fill: #BADAF1;
+    -fx-max-width: 500px;
+}
+
+/* Style du bouton */
+.button {
+    -fx-font-size: 14px;
+    -fx-background-color: #BADAF1;
+    -fx-text-fill: rgba(10, 34, 94, 1);
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #81acce;
+}
+
+/* Style de la zone de texte des résultats */
+.text-area {
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-background-color: rgba(10, 34, 94, 1);
+    -fx-control-inner-background: rgba(10, 34, 94, 1);
+    -fx-max-width: 500px;
+    -fx-text-fill: #BADAF1;
+}
