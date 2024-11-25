@@ -1,0 +1,25 @@
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csprojAssemblyReference.cache
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.CoreCompileInputs.cache
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe.config
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+D:\ENSEIGNEMENTS\SoCWS SI4\TD Self Hosted WS\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe.config
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.AssemblyReference.cache
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.SuggestedBindingRedirects.cache
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.CoreCompileInputs.cache
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+C:\Users\Ben\Documents\Enseignements\2022-2023\RMISoc\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe.config
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\Newtonsoft.Json.dll
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\bin\Debug\Newtonsoft.Json.xml
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.AssemblyReference.cache
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.csproj.CoreCompileInputs.cache
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleA.6E742EEF.Up2Date
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.exe
+C:\Users\abbon\OneDrive\Documents\SI4\middleware\ConsoleApp_for_Self_Hosted_WS\ConsoleApp_for_Self_Hosted_WS\obj\Debug\ConsoleApp_for_Self_Hosted_WS.pdb
