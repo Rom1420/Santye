@@ -16,13 +16,19 @@ namespace ConsoleApp_for_Self_Hosted_WS
             ServiceHost host = new ServiceHost(typeof(ItineraryService), httpUrl);
 
             // Ajouter un point de terminaison RESTful
-            host.AddServiceEndpoint(typeof(IItineraryService), new WebHttpBinding(), "")
+            host.AddServiceEndpoint(typeof(IItineraryService), new WebHttpBinding(), "rest")
                 .Behaviors.Add(new WebHttpBehavior());
+            host.AddServiceEndpoint(typeof(IItineraryService), new BasicHttpBinding(), "soap");
 
             // Activer l'échange de métadonnées
-            ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
-            smb.HttpGetEnabled = true;
-            host.Description.Behaviors.Add(smb);
+            if (host.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
+            {
+                ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
+                smb.HttpGetEnabled = true;
+                host.Description.Behaviors.Add(smb);
+            }
+            host.AddServiceEndpoint(ServiceMetadataBehavior.MexContractName, MetadataExchangeBindings.CreateMexHttpBinding(), "mex");
+
 
             // Démarrer le service
             host.Open();

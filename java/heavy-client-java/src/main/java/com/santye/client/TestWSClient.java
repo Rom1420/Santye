@@ -1,7 +1,9 @@
 package com.santye.client;
 
 import com.santye.client.generated.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
+import javax.jms.*;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
@@ -9,11 +11,11 @@ public class TestWSClient {
 
     public static String findItinerary(String departure, String destination) {
         try {
-            // Créer une instance du service ItineraryService
+            // Create instance of the ItineraryService
             ItineraryService service = new ItineraryService();
             IItineraryService port = service.getBasicHttpBindingIItineraryService();
 
-            // Créer l'objet de requête ItineraryRequest
+            // Create ItineraryRequest object
             ItineraryRequest request = new ItineraryRequest();
             JAXBElement<String> departureElement = new JAXBElement<>(
                     new QName("http://schemas.datacontract.org/2004/07/ConsoleApp_for_Self_Hosted_WS", "Departure"),
@@ -29,22 +31,56 @@ public class TestWSClient {
             request.setDeparture(departureElement);
             request.setDestination(destinationElement);
 
-            // Appeler l'opération FindItinerary du service
+            // Call the FindItinerary operation
             Itinerary itinerary = port.findItinerary(request);
 
-            // Préparer le résultat
+            // Prepare the result
             if (itinerary != null && itinerary.getSteps() != null) {
-                StringBuilder resultBuilder = new StringBuilder("Itinéraire trouvé :\n");
+                StringBuilder resultBuilder = new StringBuilder("Itinerary found:\n");
                 itinerary.getSteps().getValue().getStep().forEach(step -> {
-                    resultBuilder.append("Étape : ").append(step.getInstruction().getValue()).append("\n");
+                    resultBuilder.append("Step: ").append(step.getInstruction().getValue()).append("\n");
                 });
                 return resultBuilder.toString();
             } else {
-                return "Aucun itinéraire trouvé.";
+                return "No itinerary found.";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "Erreur lors de la récupération de l'itinéraire : " + e.getMessage();
+            return "Error while retrieving the itinerary: " + e.getMessage();
         }
+    }
+
+    public static void listenToQueue(String queueName) {
+        try {
+            ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+            Connection connection = factory.createConnection();
+            connection.start();
+
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Destination destination = session.createQueue(queueName);
+
+            MessageConsumer consumer = session.createConsumer(destination);
+            consumer.setMessageListener(message -> {
+                if (message instanceof TextMessage) {
+                    try {
+                        String text = ((TextMessage) message).getText();
+                        System.out.println("Received step from queue: " + text);
+                    } catch (JMSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        // Test SOAP request
+        String itineraryResult = findItinerary("48.8566,2.3522", "48.8606,2.3376");
+        System.out.println(itineraryResult);
+
+        // Listen to ActiveMQ queue for real-time updates
+        listenToQueue("itineraryQueue");
     }
 }

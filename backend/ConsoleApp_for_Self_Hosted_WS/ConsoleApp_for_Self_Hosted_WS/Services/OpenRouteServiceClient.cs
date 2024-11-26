@@ -1,20 +1,16 @@
 ﻿using Apache.NMS;
 using Apache.NMS.ActiveMQ;
-using ConsoleApp_for_Self_Hosted_WS.Interafces;
 using ConsoleApp_for_Self_Hosted_WS.Models;
-using ConsoleApp_for_Self_Hosted_WS.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
+using System.Text.Json;
+
 
 namespace ConsoleApp_for_Self_Hosted_WS.Services
 {
