@@ -7,9 +7,9 @@ public class ItineraryService : IItineraryService
 {
     private readonly ProxyService _proxyService = new ProxyService();
 
-    public async Task<Itinerary> FindItinerary(ItineraryRequest request)
+    public async Task<Itinerary> GetItinerary(string departure, string destination)
     {
         // Utiliser ProxyCacheService pour obtenir l'itinéraire
-        return await _proxyService.GetCachedItinerary(request.Departure, request.Destination);
+        return await _proxyService.GetItinerary(departure, destination);
     }
 }

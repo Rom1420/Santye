@@ -11,7 +11,7 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
         private static readonly OpenRouteServiceClient _openRouteServiceClient = new OpenRouteServiceClient();
         private static readonly GenericCache<Itinerary> _cache = new GenericCache<Itinerary>();
 
-        public async Task<Itinerary> GetCachedItinerary(string departure, string destination)
+        public async Task<Itinerary> GetItinerary(string departure, string destination)
         {
             string cacheKey = $"{departure}-{destination}";
 
@@ -24,7 +24,8 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             }
 
             // Si l'itinéraire n'est pas en cache, utiliser le client pour obtenir l'itinéraire
-            var itinerary = await _openRouteServiceClient.GetItinerary(departure, destination);
+            Console.WriteLine("Using CalculateItinerary departure/destination : "+$"{departure}/{destination}");
+            var itinerary = await _openRouteServiceClient.CalculateItinerary(departure, destination);
 
             // Ajouter au cache avec une durée d'expiration par défaut
             _cache.Add(cacheKey, itinerary, DateTimeOffset.Now.AddMinutes(5));

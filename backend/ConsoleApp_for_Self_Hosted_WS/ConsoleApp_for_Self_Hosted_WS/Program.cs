@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using ConsoleApp_for_Self_Hosted_WS.Services;
 
 namespace ConsoleApp_for_Self_Hosted_WS
 {

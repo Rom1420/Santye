@@ -12,7 +12,7 @@ namespace ConsoleApp_for_Self_Hosted_WS.services
         {
             [OperationContract]
             [WebInvoke(Method = "POST", UriTemplate = "/getCachedItinerary", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-            Task<Itinerary> GetCachedItinerary(string departure, string destination);
+            Task<Itinerary> GetItinerary(string departure, string destination);
         }
     }
 }

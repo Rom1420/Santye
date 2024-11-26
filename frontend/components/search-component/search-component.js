@@ -422,30 +422,6 @@ class SearchComponent extends HTMLElement {
         }
 }
 
-
-    async getCoordinatesFromAddress(address) {
-        const apiKey = "5b3ce3597851110001cf62480c8234b09f1441898dd7ee417b09d025"; 
-        const url = `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(address)}`;
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch coordinates for address: ${address}`);
-            }
-            const data = await response.json();
-
-            if (!data.features || data.features.length === 0) {
-                throw new Error(`No coordinates found for address: ${address}`);
-            }
-
-            const [longitude, latitude] = data.features[0].geometry.coordinates;
-            return `${longitude},${latitude}`;
-        } catch (error) {
-            console.error("Error fetching coordinates:", error);
-            throw error;
-        }
-    }
-
 }
 
 customElements.define('search-component', SearchComponent);

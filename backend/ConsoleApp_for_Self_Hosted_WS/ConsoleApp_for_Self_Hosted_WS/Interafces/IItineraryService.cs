@@ -15,14 +15,8 @@ namespace ConsoleApp_for_Self_Hosted_WS
     public interface IItineraryService
     {
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/findItinerary", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Task<Itinerary> FindItinerary(ItineraryRequest request);
-    }
-
-    public class ItineraryRequest
-    {
-        public string Departure { get; set; }
-        public string Destination { get; set; }
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "/GetItinerary?departure={departure}&arrival={arrival}")]
+        Task<Itinerary> GetItinerary(string departure, string arrival);
     }
 
 }
