@@ -21,3 +21,12 @@
     border-radius: 5px; /* Coins arrondis */
     padding: 10px; /* Espace intérieur */
 }
+
+.separation-line {
+    content: '';
+    width: 60%;
+    border-radius: 20px;
+    background-color: var(--dark-blue);
+    margin: 10px auto;
+    padding: 2px;
+}

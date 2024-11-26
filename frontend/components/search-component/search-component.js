@@ -88,14 +88,15 @@ class SearchComponent extends HTMLElement {
             console.log(this.departInput.value)
         });
 
-
+        this.contectToActiveMq();
+        this.getItinerary("toulouse","tournefeuille");
     
     }
 
     addTransportsButtons(){
         const departValue = this.departInput.value.trim();
         const destinationValue = this.destinationInput.value.trim();
-            this.validateItinerary(departValue, destinationValue)
+            this.getItinerary(departValue, destinationValue)
             .then(queueName => {
                 this.createTransportButtons();
                 this.expandSearchContainer();
@@ -107,13 +108,14 @@ class SearchComponent extends HTMLElement {
                 console.error("Error fetching itinerary:", error);
             });
     }
-
+/*
     async validateItinerary(departure, destination) {
+        return await this.getItinerary(departure,destination);
         const isDepartureGPS = this.isValidCoordinates(departure);
         const isDestinationGPS = this.isValidCoordinates(destination);
 
         if (isDepartureGPS && isDestinationGPS) {
-           return await this.fetchItinerary(departure, destination);
+           return await this.getItinerary(departure,destination);
         }
 
         const isDepartureValid = await this.validateAddress(departure);
@@ -135,8 +137,8 @@ class SearchComponent extends HTMLElement {
             const coordinatesDestination = await this.getCoordinatesFromAddress(destination);
 
             console.log(coordinatesDeparture, coordinatesDestination)
-            return await this.fetchItinerary(coordinatesDeparture, coordinatesDestination);
-        }
+            return await this.getItinerary(departure,destination);
+        }*/
 
     createTransportButtons() {
         const inputsContainer = this.querySelector('.inputs-container');
@@ -364,63 +366,45 @@ class SearchComponent extends HTMLElement {
         }
     }
 
+    async contectToActiveMq(){
+        //récuperer la queue de activemq
+        var client, destination;
+        let url = "ws://localhost:61614/stomp";
+        let login = "admin";
+        let passcode = "password";
+        let mess ="rien"
+        destination = "itineraryQueue";
 
-    async fetchItinerary(departure, destination) {
-        // check et conversion des coordonnées
-        const splitCoordinates = (coord) => {
-            const [lon, lat] = coord.split(',').map(Number); // Convertir en nombres
-            return [lon, lat];
-        };
+        client = Stomp.client(url);
 
-        // Check et conversion les coordonnées de départ et d'arrivée
-        const departureCoordinate = Array.isArray(departure) ? departure : splitCoordinates(departure);
-        const destinationCoordinate = Array.isArray(destination) ? destination : splitCoordinates(destination);
-
-        console.log("Departure coordinates:", departureCoordinate);
-        console.log("Destination coordinates:", destinationCoordinate);
-
-        // Check que les coordonnées sont dans le bon ordre [longitude, latitude]
-        const departureLonLat = departureCoordinate.length === 2 ? departureCoordinate : [departureCoordinate[1], departureCoordinate[0]];
-        const destinationLonLat = destinationCoordinate.length === 2 ? destinationCoordinate : [destinationCoordinate[1], destinationCoordinate[0]];
-
-        console.log("Final Departure coordinates:", departureLonLat);
-        console.log("Final Destination coordinates:", destinationLonLat);
-
-        try {
-            const response = await fetch(
-                "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
-                {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
-                        "Content-Type": "application/json",
-                        "Authorization": "5b3ce3597851110001cf62480c8234b09f1441898dd7ee417b09d025"
-                    },
-                    body: JSON.stringify({
-                        coordinates: [departureLonLat, destinationLonLat],
-                        instructions: true
-                    })
-                }
-            );
-
-            if (!response.ok) {
-                const errorDetails = await response.text();
-                throw new Error(`Erreur lors de la requête : ${response.status} - ${response.statusText}\nDétails : ${errorDetails}`);
-            }
-
-            const data = await response.json();
-            const steps = data.features[0]?.properties?.segments[0]?.steps || [];
-
-            steps.forEach((step) => {
-                console.log(`Instruction: ${step.instruction}, Distance: ${step.distance}m`);
+        client.connect(login, passcode, (frame) => {
+            client.debug("connected to Stomp");
+            client.subscribe(destination, (message) => {
+                mess = message.body;
+                console.log(mess);
+    
+                // Émettre un événement personnalisé avec le message reçu
+                const event = new CustomEvent('details-update', { 
+                    detail: { message: mess } 
+                });
+                document.dispatchEvent(event); // Diffuser l'événement à partir de SearchComponent
             });
+        });
+    }
 
-            return steps;
-        } catch (error) {
-            console.error("Erreur dans fetchItinerary :", error.message);
-            throw error;
+
+    async getItinerary(depart, destination) {
+        //Envoyé au back les adresses de départ et d'arrivée
+        try{
+            console.log("avant fetch");
+            const rep = await fetch(`http://localhost:8081/api/ItineraryService/GetItinerary?departure=${depart}&arrival=${destination}`);
+            if(!rep.ok) console.log("ERREUR fetch getItineray");
+            console.log("après fetch");
+        }catch{
+            console.log("fetch done");
         }
-}
+
+    }
 
 }
 

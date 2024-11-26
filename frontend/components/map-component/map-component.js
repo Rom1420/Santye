@@ -4,14 +4,23 @@ class MapComponent extends HTMLElement {
         this.departValue = '';
         this.destinationValue = '';
         this.map = null;
-        
+        this.routeLayer = null; // Layer pour le chemin complet
+        this.nextStepLayer = null; // Layer pour la prochaine étape
     }
+
     connectedCallback() {
         this.render();
         this.initMap();
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
+
+        // Écouter les événements de mise à jour du chemin
+        document.addEventListener('details-update', (event) => {
+            const message = event.detail.message;
+            console.log('Mise à jour du chemin avec:', message);
+            this.updateRouteOnMap(message);
+        });
     }
 
     setValues(departValue, destinationValue) {
@@ -20,7 +29,7 @@ class MapComponent extends HTMLElement {
     }
 
     setLocation(type, location) {
-        if(type === 'depart'){
+        if (type === 'depart') {
             this.departValue = location;
         } else {
             this.destinationValue = location;
@@ -33,62 +42,60 @@ class MapComponent extends HTMLElement {
             <link rel="stylesheet" href="./components/map-component/style.css">
             <link rel="stylesheet" href="./components/details-component/style.css">
             <div class="main-container">
-            <div class="ping-on-map hide">
-                Choississez un point sur la carte
-            </div>
-            <div class="left-container">
-                <div id="scroll">
-                    <search-component etat="map-displayed"></search-component> 
-                    <div class="separation-line"></div>
-                    <details-component></details-component>
+                <div class="ping-on-map hide">
+                    Choississez un point sur la carte
                 </div>
-            </div>
-            <div class="right-container">
-                <h1 class="main-title">Santye</h1>
-                <button class="menu-button">
-                    <div class="icon-bar"></div>
-                    <div class="icon-bar"></div>
-                    <div class="icon-bar"></div>
-                </button>
-                <div class="map-container">
-                    <div class="map" id="map"></div>
+                <div class="left-container">
+                    <div id="scroll">
+                        <search-component etat="map-displayed"></search-component> 
+                        <div class="separation-line"></div>
+                        <details-component></details-component>
+                    </div>
                 </div>
-                <div class="eta-container">
-                    <img src="./assets/pics/clock.png" alt="ETA" id="clock">
-                    <h4 id="ETA">1H45</h4>
-                </div>
+                <div class="right-container">
+                    <h1 class="main-title">Santye</h1>
+                    <button class="menu-button">
+                        <div class="icon-bar"></div>
+                        <div class="icon-bar"></div>
+                        <div class="icon-bar"></div>
+                    </button>
+                    <div class="map-container">
+                        <div class="map" id="map"></div>
+                    </div>
+                    <div class="eta-container">
+                        <img src="./assets/pics/clock.png" alt="ETA" id="clock">
+                        <h4 id="ETA">1H45</h4>
+                    </div>
                 </div>
             </div>
         `;
-        this.addEventListeners();   
+        this.addEventListeners();
     }
 
-    addEventListeners(){
+    addEventListeners() {
         const toggleBtn = document.querySelector('.menu-button');
         const container = document.querySelector('.main-container');
         const leftContainer = this.querySelector('.left-container');
         toggleBtn.addEventListener('click', () => {
             container.classList.toggle('reduced');
-            
             if (container.classList.contains('reduced')) {
-                leftContainer.classList.remove('hidden'); 
+                leftContainer.classList.remove('hidden');
             } else {
-                leftContainer.classList.add('hidden'); 
+                leftContainer.classList.add('hidden');
             }
         });
-        
     }
 
-    getDepartValue(){
+    getDepartValue() {
         return this.departValue;
     }
 
-    getDestinationValue(){
+    getDestinationValue() {
         return this.destinationValue;
     }
 
     initMap() {
-        this.map = L.map('map').setView([51.505, -0.09], 13);  
+        this.map = L.map('map').setView([51.505, -0.09], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -98,20 +105,19 @@ class MapComponent extends HTMLElement {
         if (typeof this.departValue === 'string' && this.departValue.includes(',')) {
             coords = this.departValue.split(',').map(coord => parseFloat(coord.trim()));
         } else if (Array.isArray(this.departValue) && this.departValue.length === 2) {
-            coords = this.departValue;  
+            coords = this.departValue;
         }
 
         if (coords && coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
             this.map.setView(coords, 13);
             L.marker(coords).addTo(this.map);
         } else {
-            console.log("adress", this.departValue)
-            this.geocodeAddress(this.departValue,this.map);
+            this.geocodeAddress(this.departValue, this.map);
         }
 
-         this.map.on('click', (event) => {
+        this.map.on('click', (event) => {
             const { lat, lng } = event.latlng;
-            console.log(lat, lng)
+            console.log('Point sélectionné :', lat, lng);
             this.dispatchEvent(new CustomEvent('map-pinged', {
                 detail: { latitude: lat, longitude: lng },
                 bubbles: true,
@@ -140,6 +146,37 @@ class MapComponent extends HTMLElement {
             .catch(error => {
                 console.error('Erreur lors du géocodage :', error);
             });
+    }
+
+    updateRouteOnMap(message) {
+        const data = JSON.parse(message);
+        const steps = data.features[0].properties.segments[0].steps;
+        const coordinates = data.features[0].geometry.coordinates;
+
+        // Supprimer les couches existantes
+        if (this.routeLayer) {
+            this.map.removeLayer(this.routeLayer);
+        }
+        if (this.nextStepLayer) {
+            this.map.removeLayer(this.nextStepLayer);
+        }
+
+        // Tracer le chemin complet en noir
+        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+        this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+
+        // Mettre en évidence la prochaine étape en bleu foncé
+        if (steps.length > 0) {
+            const nextStepCoords = [];
+            steps[0].way_points.forEach(index => {
+                nextStepCoords.push(latLngs[index]);
+            });
+
+            this.nextStepLayer = L.polyline(nextStepCoords, { color: 'darkblue', weight: 5 }).addTo(this.map);
+
+            // Centrer la carte sur la prochaine étape
+            this.map.fitBounds(L.latLngBounds(nextStepCoords));
+        }
     }
 }
 

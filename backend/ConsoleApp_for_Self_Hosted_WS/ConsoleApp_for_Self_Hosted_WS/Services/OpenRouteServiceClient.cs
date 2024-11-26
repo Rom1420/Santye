@@ -1,6 +1,5 @@
 ﻿using Apache.NMS;
 using Apache.NMS.ActiveMQ;
-using ConsoleApp_for_Self_Hosted_WS.Interafces;
 using ConsoleApp_for_Self_Hosted_WS.Models;
 using ConsoleApp_for_Self_Hosted_WS.Services;
 using System;
