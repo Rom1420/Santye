@@ -4,13 +4,19 @@ class DetailsComponent extends HTMLElement {
         const shadow = this.attachShadow({ mode: 'open' });
         this.render(shadow);
 
+        let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
+        console.log('currentActiveMqInfo:', currentActiveMqInfo);
+        let activeMqInfo = JSON.parse(currentActiveMqInfo);
+        for(let info of activeMqInfo) {
+            this.updateDetails(JSON.parse(info));
+        }
+
         // Écouter les événements `details-update`
         document.addEventListener('details-update', (event) => {
             const message = event.detail.message;
-            console.log('Message reçu dans DetailsComponent:', message);
 
             // Mettre à jour les détails avec le message reçu
-            this.updateDetails(message);
+            this.updateDetails(JSON.parse(message));
         });
     }
 
@@ -26,8 +32,7 @@ class DetailsComponent extends HTMLElement {
         container.innerHTML = ''; // Réinitialiser les anciens détails
 
         // Parse le message JSON pour obtenir les étapes
-        const data = JSON.parse(message); // Supposons que le message soit au format JSON
-        const steps = data.features[0].properties.segments[0].steps;
+        const steps = message.features[0].properties.segments[0].steps;
 
         steps.forEach((step, index) => {
             const distance = step.distance.toFixed(1); // Distance en mètres

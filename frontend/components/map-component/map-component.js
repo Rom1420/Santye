@@ -14,13 +14,20 @@ class MapComponent extends HTMLElement {
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
-
+        console.log('MapComponent a créé le listener');
         // Écouter les événements de mise à jour du chemin
+        let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
+        console.log('currentActiveMqInfo:', currentActiveMqInfo);
+        let activeMqInfo = JSON.parse(currentActiveMqInfo);
+        for(let info of activeMqInfo) {
+            this.updateRouteOnMap(JSON.parse(info));
+        }
+
         document.addEventListener('details-update', (event) => {
             const message = event.detail.message;
-            console.log('Mise à jour du chemin avec:', message);
-            this.updateRouteOnMap(message);
+            this.updateRouteOnMap(JSON.parse(message));
         });
+
     }
 
     setValues(departValue, destinationValue) {
@@ -96,6 +103,7 @@ class MapComponent extends HTMLElement {
 
     initMap() {
         this.map = L.map('map').setView([51.505, -0.09], 13);
+        console.log('Initialisation de la carte');
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -149,10 +157,10 @@ class MapComponent extends HTMLElement {
     }
 
     updateRouteOnMap(message) {
-        const data = JSON.parse(message);
-        const steps = data.features[0].properties.segments[0].steps;
-        const coordinates = data.features[0].geometry.coordinates;
-
+        console.log(typeof message);
+        const steps = message.features[0].properties.segments[0].steps;
+        const coordinates = message.features[0].geometry.coordinates;
+    
         // Supprimer les couches existantes
         if (this.routeLayer) {
             this.map.removeLayer(this.routeLayer);
@@ -160,24 +168,87 @@ class MapComponent extends HTMLElement {
         if (this.nextStepLayer) {
             this.map.removeLayer(this.nextStepLayer);
         }
-
+    
         // Tracer le chemin complet en noir
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
         this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
-
+    
         // Mettre en évidence la prochaine étape en bleu foncé
         if (steps.length > 0) {
             const nextStepCoords = [];
             steps[0].way_points.forEach(index => {
                 nextStepCoords.push(latLngs[index]);
             });
-
+    
             this.nextStepLayer = L.polyline(nextStepCoords, { color: 'darkblue', weight: 5 }).addTo(this.map);
-
+    
             // Centrer la carte sur la prochaine étape
             this.map.fitBounds(L.latLngBounds(nextStepCoords));
         }
+    
+        console.log('updateRouteOnMap:', message);
+        // Centrer la carte sur le premier point
+        if (coordinates.length > 0) {
+            const firstPoint = coordinates[0];
+            this.map.setView([firstPoint[1], firstPoint[0]], 13); // Niveau de zoom ajusté à 13
+        }
     }
+    startAnimation(message) {
+        if (!this.map) {
+            console.error('La carte n\'est pas initialisée.');
+            return;
+        }
+    
+        const steps = message.features[0].properties.segments[0].steps;
+        const coordinates = message.features[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+    
+        if (!coordinates || coordinates.length === 0) {
+            console.error('Aucun point disponible pour l\'animation.');
+            return;
+        }
+    
+        let currentIndex = 0; // Index de l'étape actuelle
+        const totalSteps = steps.length;
+    
+        const interval = setInterval(() => {
+            if (currentIndex >= totalSteps) {
+                clearInterval(interval); // Stopper l'animation si toutes les étapes sont parcourues
+                console.log('Animation terminée.');
+                return;
+            }
+    
+            // Supprimer les couches existantes pour éviter des doublons
+            if (this.routeLayer) {
+                this.map.removeLayer(this.routeLayer);
+            }
+            if (this.nextStepLayer) {
+                this.map.removeLayer(this.nextStepLayer);
+            }
+    
+            // Mettre à jour la route restante en noir
+            const remainingCoordinates = coordinates.slice(steps[currentIndex].way_points[0]);
+            this.routeLayer = L.polyline(remainingCoordinates, { color: 'black', weight: 3 }).addTo(this.map);
+    
+            // Mettre en évidence la prochaine étape en bleu foncé
+            const currentStepCoords = [];
+            steps[currentIndex].way_points.forEach(index => {
+                currentStepCoords.push(coordinates[index]);
+            });
+    
+            this.nextStepLayer = L.polyline(currentStepCoords, { color: 'darkblue', weight: 5 }).addTo(this.map);
+    
+            // Centrer la carte sur la prochaine étape avec un zoom adéquat
+            if (currentStepCoords.length > 0) {
+                this.map.fitBounds(L.latLngBounds(currentStepCoords), {
+                    padding: [50, 50]
+                });
+            }
+    
+            currentIndex++; // Passer à l'étape suivante
+        }, 5000); // Attendre 5 secondes entre chaque étape
+    }
+    
+    
 }
 
 customElements.define('map-component', MapComponent);

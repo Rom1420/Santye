@@ -88,16 +88,21 @@ class SearchComponent extends HTMLElement {
             console.log(this.departInput.value)
         });
 
-        this.contectToActiveMq();
-        this.getItinerary("toulouse","tournefeuille");
-    
+        /*this.getItinerary("toulouse","tournefeuille");
+        this.contectToActiveMq();*/
     }
 
     addTransportsButtons(){
+        /*this.createTransportButtons();
+        this.expandSearchContainer();
+        this.removeValidationButton();
+        this.createPermuteButton();
+        this.correctInputs();*/
         const departValue = this.departInput.value.trim();
         const destinationValue = this.destinationInput.value.trim();
             this.getItinerary(departValue, destinationValue)
             .then(queueName => {
+                this.contectToActiveMq();
                 this.createTransportButtons();
                 this.expandSearchContainer();
                 this.removeValidationButton();
@@ -107,6 +112,7 @@ class SearchComponent extends HTMLElement {
             .catch(error => {
                 console.error("Error fetching itinerary:", error);
             });
+        console.log(`******************************************${departValue} ${destinationValue}******************************************`);
     }
 /*
     async validateItinerary(departure, destination) {
@@ -146,6 +152,7 @@ class SearchComponent extends HTMLElement {
 
         newTransportsButtons.addEventListener('click', () => {
             if (!this.classList.contains('map-displayed')) {
+                console.log("LA RAISON DE POURQUOI CA SE FAIT PLUSIEURs FOIS");
                 this.replaceWithMapComponent();
             }
         });
@@ -214,6 +221,7 @@ class SearchComponent extends HTMLElement {
     }
     replaceWithMapComponent() {
         return new Promise((resolve) => { 
+            console.log("creation map component");
             const mapComponent = document.createElement('map-component');
             const departValue = this.departInput.value; 
             const destinationValue = this.destinationInput.value;
@@ -377,17 +385,27 @@ class SearchComponent extends HTMLElement {
 
         client = Stomp.client(url);
 
+        console.log("avant connect");
+
         client.connect(login, passcode, (frame) => {
             client.debug("connected to Stomp");
             client.subscribe(destination, (message) => {
                 mess = message.body;
-                console.log(mess);
-    
+                let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
+                if(currentActiveMqInfo){
+                    currentActiveMqInfo = JSON.parse(currentActiveMqInfo);
+                } else {
+                    currentActiveMqInfo = [];
+                }
+                currentActiveMqInfo.push(mess);
+                localStorage.setItem('activeMqInfo', JSON.stringify(currentActiveMqInfo));
+                
                 // Émettre un événement personnalisé avec le message reçu
                 const event = new CustomEvent('details-update', { 
                     detail: { message: mess } 
                 });
                 document.dispatchEvent(event); // Diffuser l'événement à partir de SearchComponent
+                
             });
         });
     }
