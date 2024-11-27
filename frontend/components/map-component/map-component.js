@@ -19,13 +19,17 @@ class MapComponent extends HTMLElement {
         let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
         console.log('currentActiveMqInfo:', currentActiveMqInfo);
         let activeMqInfo = JSON.parse(currentActiveMqInfo);
+        this.startStepAnimation(JSON.parse(activeMqInfo[0]));
+        //this.startAnimation(JSON.parse(activeMqInfo[0]));
+        /*
         for(let info of activeMqInfo) {
             this.updateRouteOnMap(JSON.parse(info));
-        }
+        }*/
 
         document.addEventListener('details-update', (event) => {
             const message = event.detail.message;
-            this.updateRouteOnMap(JSON.parse(message));
+            this.startStepAnimation(JSON.parse(message));
+            //this.startAnimation(JSON.parse(message));
         });
 
     }
@@ -71,7 +75,7 @@ class MapComponent extends HTMLElement {
                     </div>
                     <div class="eta-container">
                         <img src="./assets/pics/clock.png" alt="ETA" id="clock">
-                        <h4 id="ETA">1H45</h4>
+                        <h4 id="ETA">--</h4>
                     </div>
                 </div>
             </div>
@@ -116,13 +120,6 @@ class MapComponent extends HTMLElement {
             coords = this.departValue;
         }
 
-        if (coords && coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
-            this.map.setView(coords, 13);
-            L.marker(coords).addTo(this.map);
-        } else {
-            this.geocodeAddress(this.departValue, this.map);
-        }
-
         this.map.on('click', (event) => {
             const { lat, lng } = event.latlng;
             console.log('Point sélectionné :', lat, lng);
@@ -156,8 +153,8 @@ class MapComponent extends HTMLElement {
             });
     }
 
-    updateRouteOnMap(message) {
-        console.log(typeof message);
+    updateRouteOnMap(message, currentStepIndex = 0) {
+        console.log(`Étape courante : ${currentStepIndex}`);
         const steps = message.features[0].properties.segments[0].steps;
         const coordinates = message.features[0].geometry.coordinates;
     
@@ -168,86 +165,111 @@ class MapComponent extends HTMLElement {
         if (this.nextStepLayer) {
             this.map.removeLayer(this.nextStepLayer);
         }
+        if (this.currentMarker) {
+            this.map.removeLayer(this.currentMarker);
+        }
     
-        // Tracer le chemin complet en noir
+        // Garder uniquement les points non parcourus
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
-        this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+        const remainingWaypoints = [];
+        for (let i = currentStepIndex; i < steps.length; i++) {
+            steps[i].way_points.forEach(index => {
+                if (!remainingWaypoints.includes(index)) {
+                    remainingWaypoints.push(index);
+                }
+            });
+        }
     
-        // Mettre en évidence la prochaine étape en bleu foncé
-        if (steps.length > 0) {
+        // Tracer la route noire pour les étapes restantes
+        const remainingLatLngs = remainingWaypoints.map(index => latLngs[index]);
+        if (remainingLatLngs.length > 0) {
+            this.routeLayer = L.polyline(remainingLatLngs, { color: 'black', weight: 3 }).addTo(this.map);
+        }
+    
+        // Mettre en évidence l'étape actuelle en bleu
+        if (steps.length > currentStepIndex) {
             const nextStepCoords = [];
-            steps[0].way_points.forEach(index => {
-                nextStepCoords.push(latLngs[index]);
+            steps[currentStepIndex].way_points.forEach(index => {
+                if (latLngs[index]) {
+                    nextStepCoords.push(latLngs[index]);
+                }
             });
     
-            this.nextStepLayer = L.polyline(nextStepCoords, { color: 'darkblue', weight: 5 }).addTo(this.map);
+            if (nextStepCoords.length > 0) {
+                // Tracer la ligne bleue pour l'étape actuelle
+                this.nextStepLayer = L.polyline(nextStepCoords, { color: 'blue', weight: 5 }).addTo(this.map);
     
-            // Centrer la carte sur la prochaine étape
-            this.map.fitBounds(L.latLngBounds(nextStepCoords));
+                // Ajouter un point bleu au début de l'étape actuelle
+                const startPoint = nextStepCoords[0];
+                this.currentMarker = L.circleMarker(startPoint, {
+                    radius: 8,
+                    color: 'blue',
+                    fillColor: 'blue',
+                    fillOpacity: 0.8
+                }).addTo(this.map);
+    
+                // Centrer la carte sur la route bleue avec un zoom accru
+
+                const bounds = L.latLngBounds(nextStepCoords);
+                const bufferedBounds = bounds.pad(0.3); // 0.1 représente un léger dézoom
+                this.map.fitBounds(bufferedBounds, { padding: [50, 50] });
+            } else {
+                console.error(`Aucune coordonnée trouvée pour l'étape ${currentStepIndex}`);
+            }
+        } else {
+            console.log("Toutes les étapes ont été parcourues.");
         }
-    
-        console.log('updateRouteOnMap:', message);
-        // Centrer la carte sur le premier point
-        if (coordinates.length > 0) {
-            const firstPoint = coordinates[0];
-            this.map.setView([firstPoint[1], firstPoint[0]], 13); // Niveau de zoom ajusté à 13
+
+        
+
+        // Mettre à jour l'ETA
+        const etaContainer = this.querySelector('#ETA');
+        if (etaContainer) {
+            const totalEta = this.calculateTotalEta(steps, currentStepIndex);
+            etaContainer.textContent = totalEta;
         }
     }
-    startAnimation(message) {
-        if (!this.map) {
-            console.error('La carte n\'est pas initialisée.');
-            return;
-        }
     
+    startStepAnimation(message) {
+        let currentStepIndex = 0;
         const steps = message.features[0].properties.segments[0].steps;
-        const coordinates = message.features[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
     
-        if (!coordinates || coordinates.length === 0) {
-            console.error('Aucun point disponible pour l\'animation.');
-            return;
-        }
+        // Mettre à jour la carte immédiatement pour la première étape
+        console.log(`Affichage de la première étape`);
+        this.updateRouteOnMap(message, currentStepIndex);
     
-        let currentIndex = 0; // Index de l'étape actuelle
-        const totalSteps = steps.length;
-    
+        // Démarrer l'intervalle pour les étapes suivantes
         const interval = setInterval(() => {
-            if (currentIndex >= totalSteps) {
-                clearInterval(interval); // Stopper l'animation si toutes les étapes sont parcourues
-                console.log('Animation terminée.');
-                return;
+            currentStepIndex++;
+            if (currentStepIndex < steps.length) {
+                console.log(`Affichage de l'étape ${currentStepIndex + 1} sur ${steps.length}`);
+                this.updateRouteOnMap(message, currentStepIndex);
+    
+                // Supprimer les étapes déjà parcourues du message
+                message.features[0].properties.segments[0].steps = steps.slice(currentStepIndex);
+            } else {
+                console.log("Toutes les étapes ont été affichées.");
+                clearInterval(interval); // Arrêter l'intervalle une fois toutes les étapes affichées
             }
-    
-            // Supprimer les couches existantes pour éviter des doublons
-            if (this.routeLayer) {
-                this.map.removeLayer(this.routeLayer);
-            }
-            if (this.nextStepLayer) {
-                this.map.removeLayer(this.nextStepLayer);
-            }
-    
-            // Mettre à jour la route restante en noir
-            const remainingCoordinates = coordinates.slice(steps[currentIndex].way_points[0]);
-            this.routeLayer = L.polyline(remainingCoordinates, { color: 'black', weight: 3 }).addTo(this.map);
-    
-            // Mettre en évidence la prochaine étape en bleu foncé
-            const currentStepCoords = [];
-            steps[currentIndex].way_points.forEach(index => {
-                currentStepCoords.push(coordinates[index]);
-            });
-    
-            this.nextStepLayer = L.polyline(currentStepCoords, { color: 'darkblue', weight: 5 }).addTo(this.map);
-    
-            // Centrer la carte sur la prochaine étape avec un zoom adéquat
-            if (currentStepCoords.length > 0) {
-                this.map.fitBounds(L.latLngBounds(currentStepCoords), {
-                    padding: [50, 50]
-                });
-            }
-    
-            currentIndex++; // Passer à l'étape suivante
-        }, 5000); // Attendre 5 secondes entre chaque étape
+        }, 5000); // Relancer toutes les 5 secondes
     }
     
+    
+    calculateTotalEta(steps, currentStepIndex) {
+        // Filtrer les étapes restantes
+        const remainingSteps = steps.slice(currentStepIndex);
+    
+        // Additionner les durées restantes
+        const totalDurationInSeconds = remainingSteps.reduce((total, step) => total + step.duration, 0);
+    
+        // Convertir en minutes et heures
+        const totalMinutes = Math.ceil(totalDurationInSeconds / 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+    
+        // Retourner un format lisible
+        return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+    }    
     
 }
 
