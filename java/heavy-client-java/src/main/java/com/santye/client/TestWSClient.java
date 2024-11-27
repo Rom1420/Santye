@@ -11,12 +11,13 @@ public class TestWSClient {
 
     public static String findItinerary(String departure, String destination) {
         try {
+            System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
             // Create instance of the ItineraryService
             ItineraryService service = new ItineraryService();
             IItineraryService port = service.getBasicHttpBindingIItineraryService();
 
             // Create ItineraryRequest object
-            ItineraryRequest request = new ItineraryRequest();
+            GetItinerary request = new GetItinerary();
             JAXBElement<String> departureElement = new JAXBElement<>(
                     new QName("http://schemas.datacontract.org/2004/07/ConsoleApp_for_Self_Hosted_WS", "Departure"),
                     String.class,
@@ -29,15 +30,16 @@ public class TestWSClient {
             );
 
             request.setDeparture(departureElement);
-            request.setDestination(destinationElement);
+            request.setArrival(destinationElement);
 
             // Call the FindItinerary operation
-            Itinerary itinerary = port.findItinerary(request);
+            Itinerary itinerary = port.getItinerary(request.getDeparture().getValue(), request.getArrival().getValue());
+
 
             // Prepare the result
             if (itinerary != null && itinerary.getSteps() != null) {
                 StringBuilder resultBuilder = new StringBuilder("Itinerary found:\n");
-                itinerary.getSteps().getValue().getStep().forEach(step -> {
+                itinerary.getSteps().getValue().getOpenRouteServiceClientStep().forEach(step -> {
                     resultBuilder.append("Step: ").append(step.getInstruction().getValue()).append("\n");
                 });
                 return resultBuilder.toString();
