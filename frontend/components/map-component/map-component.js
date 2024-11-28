@@ -6,6 +6,7 @@ class MapComponent extends HTMLElement {
         this.map = null;
         this.routeLayer = null; // Layer pour le chemin complet
         this.nextStepLayer = null; // Layer pour la prochaine étape
+        this.steps = []; // Stocker les étapes localement
     }
 
     connectedCallback() {
@@ -20,6 +21,7 @@ class MapComponent extends HTMLElement {
         if (storedMessage) {
             try {
                 const message = JSON.parse(storedMessage);
+                this.updateSteps();
                 this.startStepAnimation(message);
             } catch (error) {
                 console.error('Erreur lors de la lecture du localStorage :', error);
@@ -31,9 +33,10 @@ class MapComponent extends HTMLElement {
             const message = event.detail;
         
             // Vérifiez si le message est valide
-            if (message && message.FootRoute) {
+            if (message && message.Pied) {
                 // Appeler les fonctions avec le message
                 //this.updateRouteOnMap(message);
+                this.updateSteps();
                 this.startStepAnimation(message);
             } else {
                 console.error('Message de route non valide reçu :', message);
@@ -184,9 +187,16 @@ class MapComponent extends HTMLElement {
 
     updateRouteOnMap(message, currentStepIndex = 0) {
         console.log(`Étape courante : ${currentStepIndex}`);
-        const steps = message.FootRoute.features[0].properties.segments[0].steps;
-        const coordinates = message.FootRoute.features[0].geometry.coordinates;
-    
+        console.log('Mise à jour de la route sur la carte avec le message :', message);
+        const coordinates = message.Velo1
+            ? [
+                ...message.Velo.Pied1.features[0].geometry.coordinates,
+                ...message.Velo.Velo1.features[0].geometry.coordinates,
+                ...message.Velo.Pied2.features[0].geometry.coordinates
+            ]
+            : message.features[0].geometry.coordinates;
+        
+        console.log('steps :', this.steps);
         // Supprimer les couches existantes
         if (this.routeLayer) {
             this.map.removeLayer(this.routeLayer);
@@ -201,8 +211,8 @@ class MapComponent extends HTMLElement {
         // Garder uniquement les points non parcourus
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
         const remainingWaypoints = [];
-        for (let i = currentStepIndex; i < steps.length; i++) {
-            steps[i].way_points.forEach(index => {
+        for (let i = currentStepIndex; i < this.steps.length; i++) {
+            this.steps[i].way_points.forEach(index => {
                 if (!remainingWaypoints.includes(index)) {
                     remainingWaypoints.push(index);
                 }
@@ -216,9 +226,9 @@ class MapComponent extends HTMLElement {
         }
     
         // Mettre en évidence l'étape actuelle en bleu
-        if (steps.length > currentStepIndex) {
+        if (this.steps.length > currentStepIndex) {
             const nextStepCoords = [];
-            steps[currentStepIndex].way_points.forEach(index => {
+            this.steps[currentStepIndex].way_points.forEach(index => {
                 if (latLngs[index]) {
                     nextStepCoords.push(latLngs[index]);
                 }
@@ -254,14 +264,13 @@ class MapComponent extends HTMLElement {
         // Mettre à jour l'ETA
         const etaContainer = this.querySelector('#ETA');
         if (etaContainer) {
-            const totalEta = this.calculateTotalEta(steps, currentStepIndex);
+            const totalEta = this.calculateTotalEta(currentStepIndex);
             etaContainer.textContent = totalEta;
         }
     }
     
     startStepAnimation(message) {
         let currentStepIndex = 0;
-        const steps = message.FootRoute.features[0].properties.segments[0].steps;
     
         // Mettre à jour la carte immédiatement pour la première étape
         console.log(`Affichage de la première étape`);
@@ -270,12 +279,12 @@ class MapComponent extends HTMLElement {
         // Démarrer l'intervalle pour les étapes suivantes
         const interval = setInterval(() => {
             currentStepIndex++;
-            if (currentStepIndex < steps.length) {
-                console.log(`Affichage de l'étape ${currentStepIndex + 1} sur ${steps.length}`);
+            if (currentStepIndex < this.steps.length) {
+                console.log(`Affichage de l'étape ${currentStepIndex + 1} sur ${this.steps.length}`);
                 this.updateRouteOnMap(message, currentStepIndex);
     
                 // Supprimer les étapes déjà parcourues du message
-                message.FootRoute.features[0].properties.segments[0].steps = steps.slice(currentStepIndex);
+                this.steps = this.steps.slice(currentStepIndex);
             } else {
                 console.log("Toutes les étapes ont été affichées.");
                 clearInterval(interval); // Arrêter l'intervalle une fois toutes les étapes affichées
@@ -285,9 +294,10 @@ class MapComponent extends HTMLElement {
     }
     
     
-    calculateTotalEta(steps, currentStepIndex) {
+    calculateTotalEta(currentStepIndex) {
         // Filtrer les étapes restantes
-        const remainingSteps = steps.slice(currentStepIndex);
+        let remainingSteps = this.steps;
+        remainingSteps = remainingSteps.slice(currentStepIndex);
     
         // Additionner les durées restantes
         const totalDurationInSeconds = remainingSteps.reduce((total, step) => total + step.duration, 0);
@@ -299,6 +309,45 @@ class MapComponent extends HTMLElement {
     
         // Retourner un format lisible
         return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+    }    
+
+    updateSteps() {
+
+        console.log('AVANT mise à jour des steps...');
+
+        // Récupérer les données depuis le localStorage
+        const storedData = localStorage.getItem('activeMqInfo');
+        if (!storedData) {
+            console.error("Aucune donnée trouvée dans le localStorage.");
+            this.steps = []; // Réinitialiser si les données sont absentes
+            return;
+        }
+    
+        const parsedData = JSON.parse(storedData);
+    
+        // Initialiser les steps en fonction du mode
+        if (parsedData.Velo1) {  
+            // Combiner les steps de Pied1, Velo1, et Pied2
+            this.steps = [
+                ...parsedData.Pied1.features[0].properties.segments[0].steps,
+                ...parsedData.Velo1.features[0].properties.segments[0].steps,
+                ...parsedData.Pied2.features[0].properties.segments[0].steps
+            ];
+            
+            console.log("Steps pour le mode Vélo mis à jour depuis le localStorage :", this.steps);
+        } else {
+            if ( !parsedData.features) {
+                console.error("Les données pour Pied dans le localStorage sont invalides ou incomplètes.");
+                this.steps = []; // Réinitialiser si les données sont invalides
+                console.log('Steps mis à jour :', this.steps);
+                return;
+            }
+            // Steps pour le trajet à pied
+            this.steps = parsedData.features[0].properties.segments[0].steps;
+    
+            console.log("Steps pour le mode Pied mis à jour depuis le localStorage :", this.steps);
+        }
+
     }    
     
 }

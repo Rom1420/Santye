@@ -2,6 +2,9 @@ class SearchComponent extends HTMLElement {
     constructor() {
         super();
         this.render();
+
+        this.parsedMessage = null;
+        this.velo = false;
         
         this.departInput = this.querySelector('.depart-container input');
         this.destinationInput = this.querySelector('.destination-container input');
@@ -377,13 +380,10 @@ class SearchComponent extends HTMLElement {
 
     async contectToActiveMq(){
         //récuperer la queue de activemq
-        var client, destinationVelo, destinationPied;
+        var client;
         let url = "ws://localhost:61614/stomp";
         let login = "admin";
         let passcode = "password";
-        let mess ="rien"
-        destinationVelo = "itineraryQueueFull";
-        destinationPied = "itineraryQueueWalking";
 
         client = Stomp.client(url);
 
@@ -410,18 +410,12 @@ class SearchComponent extends HTMLElement {
                 document.dispatchEvent(event); // Diffuser l'événement à partir de SearchComponent
                 
             });*/
-            client.subscribe(destinationPied, (message) => {
+            client.subscribe("itineraryQueue", (message) => {
                 try {
                     // Parsing sécurisé du message JSON
-                    const parsedMessage = JSON.parse(message.body);
-            
-                    // Stocker dans le localStorage (remplace les anciennes données)
-                    localStorage.setItem('activeMqInfo', JSON.stringify(parsedMessage));
-                    console.log("Message reçu et mis à jour dans le localStorage.");
-            
-                    // Émettre un événement pour mettre à jour la carte et les étapes
-                    const event = new CustomEvent('route-updated', { detail: parsedMessage });
-                    document.dispatchEvent(event);
+                    this.parsedMessage = JSON.parse(message.body);
+                    this.updateInfos();
+                    
                 } catch (error) {
                     console.error('Erreur lors du traitement du message ActiveMQ :', error, message.body);
                 }
@@ -429,6 +423,58 @@ class SearchComponent extends HTMLElement {
             
         });
     }
+
+    updateInfos() {
+        if (!this.parsedMessage) {
+            console.error("Données invalides ou non disponibles dans parsedMessage.");
+            return;
+        }
+    
+        // Déterminer quelle partie du trajet doit être mise en cache
+        if (this.velo) {
+            if (
+                !this.parsedMessage.Velo ||
+                !this.parsedMessage.Velo.Pied1 ||
+                !this.parsedMessage.Velo.Velo1 ||
+                !this.parsedMessage.Velo.Pied2
+            ) {
+                console.error("Les données pour Velo sont invalides ou incomplètes.");
+                return;
+            }
+    
+            // Préparer les données pour le trajet Velo
+            const veloData = {
+                Pied1: this.parsedMessage.Velo.Pied1,
+                Velo1: this.parsedMessage.Velo.Velo1,
+                Pied2: this.parsedMessage.Velo.Pied2
+            };
+    
+            // Mettre à jour le localStorage
+            localStorage.setItem('activeMqInfo', JSON.stringify(veloData));
+            console.log("Trajet Velo mis à jour dans le localStorage :", veloData);
+    
+            // Émettre un événement pour informer les autres composants
+            const event = new CustomEvent('route-updated', { detail: veloData });
+            document.dispatchEvent(event);
+        } else {
+            if (!this.parsedMessage.Pied) {
+                console.error("Les données pour Pied sont invalides ou incomplètes.");
+                return;
+            }
+    
+            // Préparer les données pour le trajet à pied
+            const piedData = this.parsedMessage.Pied;
+    
+            // Mettre à jour le localStorage
+            localStorage.setItem('activeMqInfo', JSON.stringify(piedData));
+            console.log("Trajet Pied mis à jour dans le localStorage :", piedData);
+    
+            // Émettre un événement pour informer les autres composants
+            const event = new CustomEvent('route-updated', { detail: piedData });
+            document.dispatchEvent(event);
+        }
+    }
+    
 
 
     async getItinerary(depart, destination) {

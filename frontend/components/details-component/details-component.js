@@ -20,7 +20,7 @@ class DetailsComponent extends HTMLElement {
             const message = event.detail;
         
             // Vérifiez si le message est valide
-            if (message && message.FootRoute) {
+            if (message && message.Pied) {
                 this.updateDetails(message);
             } else {
                 console.error('Message de route non valide reçu :', message);
@@ -55,7 +55,7 @@ class DetailsComponent extends HTMLElement {
 
     updateDetails(message) {
         // Mettre à jour les étapes
-        this.steps = message.FootRoute.features[0].properties.segments[0].steps;
+        this.steps = message.Pied.features[0].properties.segments[0].steps;
         this.updateDetailsView();
 
         // Démarrer la mise à jour automatique si elle n'est pas encore active
