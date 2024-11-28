@@ -188,15 +188,25 @@ class MapComponent extends HTMLElement {
     updateRouteOnMap(message, currentStepIndex = 0) {
         console.log(`Étape courante : ${currentStepIndex}`);
         console.log('Mise à jour de la route sur la carte avec le message :', message);
+    
+        // Combiner les coordonnées pour les trajets à pied et à vélo
+        /*
         const coordinates = message.Velo1
             ? [
-                ...message.Velo.Pied1.features[0].geometry.coordinates,
-                ...message.Velo.Velo1.features[0].geometry.coordinates,
-                ...message.Velo.Pied2.features[0].geometry.coordinates
-            ]
-            : message.features[0].geometry.coordinates;
-        
-        console.log('steps :', this.steps);
+                ...message.Pied1.features[0].geometry.coordinates,
+                ...message.Velo1.features[0].geometry.coordinates,
+                ...message.Pied2.features[0].geometry.coordinates
+              ]
+            : message.features[0].geometry.coordinates;*/
+        console.log('MESSAGE:', message);
+        console.log('MESSAGE.PIED1:', message.Pied1);
+        console.log('MESSAGE.PIED1.FEATURES:', message.Pied1.features);
+        console.log('MESSAGE.PIED1.FEATURES[0]:', message.Pied1.features[0]);
+        console.log('MESSAGE.PIED1.FEATURES[0].GEOMETRY:', message.Pied1.features[0].geometry);
+        console.log('MESSAGE.PIED1.FEATURES[0].GEOMETRY.COORDINATES:', message.Pied1.features[0].geometry.coordinates);
+        const coordinates = message.Pied1.features[0].geometry.coordinates;
+        console.log('COORDINATES:', coordinates);
+    
         // Supprimer les couches existantes
         if (this.routeLayer) {
             this.map.removeLayer(this.routeLayer);
@@ -207,9 +217,18 @@ class MapComponent extends HTMLElement {
         if (this.currentMarker) {
             this.map.removeLayer(this.currentMarker);
         }
+        if (this.bikeRouteLayer) {
+            this.map.removeLayer(this.bikeRouteLayer);
+        }
+        if (this.stationMarkers) {
+            this.stationMarkers.forEach(marker => this.map.removeLayer(marker));
+        }
     
+        this.stationMarkers = []; // Réinitialiser les marqueurs de stations
+        console.log('AAAAAAA');
         // Garder uniquement les points non parcourus
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+        console.log('BBBBBBB'+latLngs);
         const remainingWaypoints = [];
         for (let i = currentStepIndex; i < this.steps.length; i++) {
             this.steps[i].way_points.forEach(index => {
@@ -219,11 +238,38 @@ class MapComponent extends HTMLElement {
             });
         }
     
-        // Tracer la route noire pour les étapes restantes
+        // Tracer la route noire pour les étapes restantes (tout le trajet)
         const remainingLatLngs = remainingWaypoints.map(index => latLngs[index]);
         if (remainingLatLngs.length > 0) {
             this.routeLayer = L.polyline(remainingLatLngs, { color: 'black', weight: 3 }).addTo(this.map);
         }
+        
+        /*
+        // Partie vélo : mettre en évidence en vert
+        if (message.Velo1) {
+            const bikeCoords = message.Velo1.features[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+            this.bikeRouteLayer = L.polyline(bikeCoords, { color: 'green', weight: 5 }).addTo(this.map);
+    
+            // Ajouter des marqueurs pour les stations (départ et arrivée du vélo)
+            const bikeStartStation = message.Velo1.features[0].geometry.coordinates[0]; // Première coordonnée
+            const bikeEndStation = message.Velo1.features[0].geometry.coordinates.at(-1); // Dernière coordonnée
+    
+            const bikeStartMarker = L.circleMarker([bikeStartStation[1], bikeStartStation[0]], {
+                radius: 8,
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.8
+            }).addTo(this.map);
+    
+            const bikeEndMarker = L.circleMarker([bikeEndStation[1], bikeEndStation[0]], {
+                radius: 8,
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.8
+            }).addTo(this.map);
+    
+            this.stationMarkers.push(bikeStartMarker, bikeEndMarker);
+        }*/
     
         // Mettre en évidence l'étape actuelle en bleu
         if (this.steps.length > currentStepIndex) {
@@ -248,9 +294,8 @@ class MapComponent extends HTMLElement {
                 }).addTo(this.map);
     
                 // Centrer la carte sur la route bleue avec un zoom accru
-
                 const bounds = L.latLngBounds(nextStepCoords);
-                const bufferedBounds = bounds.pad(0.3); // 0.1 représente un léger dézoom
+                const bufferedBounds = bounds.pad(0.3); // Légère marge pour le zoom
                 this.map.fitBounds(bufferedBounds, { padding: [50, 50] });
             } else {
                 console.error(`Aucune coordonnée trouvée pour l'étape ${currentStepIndex}`);
@@ -258,9 +303,7 @@ class MapComponent extends HTMLElement {
         } else {
             console.log("Toutes les étapes ont été parcourues.");
         }
-
-        
-
+    
         // Mettre à jour l'ETA
         const etaContainer = this.querySelector('#ETA');
         if (etaContainer) {
@@ -268,6 +311,7 @@ class MapComponent extends HTMLElement {
             etaContainer.textContent = totalEta;
         }
     }
+    
     
     startStepAnimation(message) {
         let currentStepIndex = 0;
@@ -328,11 +372,13 @@ class MapComponent extends HTMLElement {
         // Initialiser les steps en fonction du mode
         if (parsedData.Velo1) {  
             // Combiner les steps de Pied1, Velo1, et Pied2
+            /** 
             this.steps = [
                 ...parsedData.Pied1.features[0].properties.segments[0].steps,
                 ...parsedData.Velo1.features[0].properties.segments[0].steps,
                 ...parsedData.Pied2.features[0].properties.segments[0].steps
-            ];
+            ];*/
+            this.steps = parsedData.Pied1.features[0].properties.segments[0].steps;
             
             console.log("Steps pour le mode Vélo mis à jour depuis le localStorage :", this.steps);
         } else {

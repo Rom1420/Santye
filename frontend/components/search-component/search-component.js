@@ -4,7 +4,7 @@ class SearchComponent extends HTMLElement {
         this.render();
 
         this.parsedMessage = null;
-        this.velo = false;
+        this.velo = true;
         
         this.departInput = this.querySelector('.depart-container input');
         this.destinationInput = this.querySelector('.destination-container input');
