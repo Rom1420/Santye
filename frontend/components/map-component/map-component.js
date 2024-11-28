@@ -20,6 +20,7 @@ class MapComponent extends HTMLElement {
         console.log('currentActiveMqInfo:', currentActiveMqInfo);
         let activeMqInfo = JSON.parse(currentActiveMqInfo);
         this.startStepAnimation(JSON.parse(activeMqInfo[0]));
+        //localStorage.clear();
         //this.startAnimation(JSON.parse(activeMqInfo[0]));
         /*
         for(let info of activeMqInfo) {
@@ -155,8 +156,8 @@ class MapComponent extends HTMLElement {
 
     updateRouteOnMap(message, currentStepIndex = 0) {
         console.log(`Étape courante : ${currentStepIndex}`);
-        const steps = message.features[0].properties.segments[0].steps;
-        const coordinates = message.features[0].geometry.coordinates;
+        const steps = message.FootRoute.features[0].properties.segments[0].steps;
+        const coordinates = message.FootRoute.features[0].geometry.coordinates;
     
         // Supprimer les couches existantes
         if (this.routeLayer) {
@@ -232,7 +233,7 @@ class MapComponent extends HTMLElement {
     
     startStepAnimation(message) {
         let currentStepIndex = 0;
-        const steps = message.features[0].properties.segments[0].steps;
+        const steps = message.FootRoute.features[0].properties.segments[0].steps;
     
         // Mettre à jour la carte immédiatement pour la première étape
         console.log(`Affichage de la première étape`);
@@ -246,7 +247,7 @@ class MapComponent extends HTMLElement {
                 this.updateRouteOnMap(message, currentStepIndex);
     
                 // Supprimer les étapes déjà parcourues du message
-                message.features[0].properties.segments[0].steps = steps.slice(currentStepIndex);
+                message.FootRoute.features[0].properties.segments[0].steps = steps.slice(currentStepIndex);
             } else {
                 console.log("Toutes les étapes ont été affichées.");
                 clearInterval(interval); // Arrêter l'intervalle une fois toutes les étapes affichées

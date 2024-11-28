@@ -11,7 +11,7 @@ class DetailsComponent extends HTMLElement {
         for (let info of activeMqInfo) {
             this.updateDetails(JSON.parse(info));
         }
-
+        //localStorage.clear();
         // Écouter les événements `details-update`
         document.addEventListener('details-update', (event) => {
             const message = event.detail.message;
@@ -31,7 +31,7 @@ class DetailsComponent extends HTMLElement {
 
     updateDetails(message) {
         // Mettre à jour les étapes
-        this.steps = message.features[0].properties.segments[0].steps;
+        this.steps = message.FootRoute.features[0].properties.segments[0].steps;
         this.updateDetailsView();
 
         // Démarrer la mise à jour automatique si elle n'est pas encore active

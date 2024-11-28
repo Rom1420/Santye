@@ -52,6 +52,7 @@ class SearchComponent extends HTMLElement {
                 </div>
         `;
     }
+    
 
     addEventListeners() {
         const validationButton = this.querySelector('.validation-button');
@@ -376,12 +377,13 @@ class SearchComponent extends HTMLElement {
 
     async contectToActiveMq(){
         //récuperer la queue de activemq
-        var client, destination;
+        var client, destinationVelo, destinationPied;
         let url = "ws://localhost:61614/stomp";
         let login = "admin";
         let passcode = "password";
         let mess ="rien"
-        destination = "itineraryQueue";
+        destinationVelo = "itineraryQueueFull";
+        destinationPied = "itineraryQueueWalking";
 
         client = Stomp.client(url);
 
@@ -389,7 +391,26 @@ class SearchComponent extends HTMLElement {
 
         client.connect(login, passcode, (frame) => {
             client.debug("connected to Stomp");
-            client.subscribe(destination, (message) => {
+            /*
+            client.subscribe(destinationVelo, (message) => {
+                mess = message.body;
+                let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
+                if(currentActiveMqInfo){
+                    currentActiveMqInfo = JSON.parse(currentActiveMqInfo);
+                } else {
+                    currentActiveMqInfo = [];
+                }
+                currentActiveMqInfo.push(mess);
+                localStorage.setItem('activeMqInfo', JSON.stringify(currentActiveMqInfo));
+                
+                // Émettre un événement personnalisé avec le message reçu
+                const event = new CustomEvent('details-update', { 
+                    detail: { message: mess } 
+                });
+                document.dispatchEvent(event); // Diffuser l'événement à partir de SearchComponent
+                
+            });*/
+            client.subscribe(destinationPied, (message) => {
                 mess = message.body;
                 let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
                 if(currentActiveMqInfo){
@@ -422,7 +443,7 @@ class SearchComponent extends HTMLElement {
             console.log("fetch done");
         }
 
-    }
+    } 
 
 }
 
