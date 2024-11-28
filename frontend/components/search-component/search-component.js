@@ -411,23 +411,22 @@ class SearchComponent extends HTMLElement {
                 
             });*/
             client.subscribe(destinationPied, (message) => {
-                mess = message.body;
-                let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
-                if(currentActiveMqInfo){
-                    currentActiveMqInfo = JSON.parse(currentActiveMqInfo);
-                } else {
-                    currentActiveMqInfo = [];
+                try {
+                    // Parsing sécurisé du message JSON
+                    const parsedMessage = JSON.parse(message.body);
+            
+                    // Stocker dans le localStorage (remplace les anciennes données)
+                    localStorage.setItem('activeMqInfo', JSON.stringify(parsedMessage));
+                    console.log("Message reçu et mis à jour dans le localStorage.");
+            
+                    // Émettre un événement pour mettre à jour la carte et les étapes
+                    const event = new CustomEvent('route-updated', { detail: parsedMessage });
+                    document.dispatchEvent(event);
+                } catch (error) {
+                    console.error('Erreur lors du traitement du message ActiveMQ :', error, message.body);
                 }
-                currentActiveMqInfo.push(mess);
-                localStorage.setItem('activeMqInfo', JSON.stringify(currentActiveMqInfo));
-                
-                // Émettre un événement personnalisé avec le message reçu
-                const event = new CustomEvent('details-update', { 
-                    detail: { message: mess } 
-                });
-                document.dispatchEvent(event); // Diffuser l'événement à partir de SearchComponent
-                
             });
+            
         });
     }
 

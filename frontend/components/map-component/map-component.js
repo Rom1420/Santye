@@ -14,25 +14,53 @@ class MapComponent extends HTMLElement {
         setTimeout(() => {
             this.classList.add('show');
         }, 1);
+
+        console.log('check of storage without event');
+        const storedMessage = localStorage.getItem('activeMqInfo');
+        if (storedMessage) {
+            try {
+                const message = JSON.parse(storedMessage);
+                this.startStepAnimation(message);
+            } catch (error) {
+                console.error('Erreur lors de la lecture du localStorage :', error);
+            }
+        }
+
+
+        document.addEventListener('route-updated', (event) => {
+            const message = event.detail;
+        
+            // Vérifiez si le message est valide
+            if (message && message.FootRoute) {
+                // Appeler les fonctions avec le message
+                //this.updateRouteOnMap(message);
+                this.startStepAnimation(message);
+            } else {
+                console.error('Message de route non valide reçu :', message);
+            }
+        });
+
+        /*
         console.log('MapComponent a créé le listener');
         // Écouter les événements de mise à jour du chemin
         let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
-        console.log('currentActiveMqInfo:', currentActiveMqInfo);
-        let activeMqInfo = JSON.parse(currentActiveMqInfo);
-        this.startStepAnimation(JSON.parse(activeMqInfo[0]));
+        //console.log('currentActiveMqInfo:', currentActiveMqInfo);
+        //let activeMqInfo = JSON.parse(currentActiveMqInfo);
+        this.startStepAnimation(currentActiveMqInfo);
+        console.log('+++++++ LECTURE LOCAL STORAGE MAP +++++++');
         //localStorage.clear();
         //this.startAnimation(JSON.parse(activeMqInfo[0]));
         /*
         for(let info of activeMqInfo) {
             this.updateRouteOnMap(JSON.parse(info));
-        }*/
+        }
 
         document.addEventListener('details-update', (event) => {
             const message = event.detail.message;
             this.startStepAnimation(JSON.parse(message));
             //this.startAnimation(JSON.parse(message));
         });
-
+        */
     }
 
     setValues(departValue, destinationValue) {
@@ -238,7 +266,7 @@ class MapComponent extends HTMLElement {
         // Mettre à jour la carte immédiatement pour la première étape
         console.log(`Affichage de la première étape`);
         this.updateRouteOnMap(message, currentStepIndex);
-    
+
         // Démarrer l'intervalle pour les étapes suivantes
         const interval = setInterval(() => {
             currentStepIndex++;
@@ -253,6 +281,7 @@ class MapComponent extends HTMLElement {
                 clearInterval(interval); // Arrêter l'intervalle une fois toutes les étapes affichées
             }
         }, 5000); // Relancer toutes les 5 secondes
+
     }
     
     

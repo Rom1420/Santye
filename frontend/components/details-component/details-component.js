@@ -5,12 +5,36 @@ class DetailsComponent extends HTMLElement {
         this.steps = []; // Stocker les étapes localement
         this.render(shadow);
 
-        let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
-        console.log('currentActiveMqInfo:', currentActiveMqInfo);
-        let activeMqInfo = JSON.parse(currentActiveMqInfo);
-        for (let info of activeMqInfo) {
-            this.updateDetails(JSON.parse(info));
+        const storedMessage = localStorage.getItem('activeMqInfo');
+        if (storedMessage) {
+            try {
+                const message = JSON.parse(storedMessage);
+                this.updateDetails(message);
+            } catch (error) {
+                console.error('Erreur lors de la lecture du localStorage :', error);
+            }
         }
+
+
+        document.addEventListener('route-updated', (event) => {
+            const message = event.detail;
+        
+            // Vérifiez si le message est valide
+            if (message && message.FootRoute) {
+                this.updateDetails(message);
+            } else {
+                console.error('Message de route non valide reçu :', message);
+            }
+        });
+        
+
+        /*
+        let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
+        console.log('*******LECTURE LOCAL STORAGE DETAILS ********');
+        let activeMqInfo = JSON.parse(currentActiveMqInfo);
+        console.log("1"+activeMqInfo);
+        console.log("2"+activeMqInfo[0]);
+        this.updateDetails(JSON.parse(activeMqInfo));
         //localStorage.clear();
         // Écouter les événements `details-update`
         document.addEventListener('details-update', (event) => {
@@ -19,7 +43,7 @@ class DetailsComponent extends HTMLElement {
 
             // Mettre à jour les détails avec le message reçu
             this.updateDetails(JSON.parse(message));
-        });
+        });*/
     }
 
     render(shadow) {
