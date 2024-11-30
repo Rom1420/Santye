@@ -2,7 +2,9 @@ class DetailsComponent extends HTMLElement {
     constructor() {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
-        this.steps = []; // Stocker les étapes localement
+        this.steps = []; // Stocker toutes les étapes
+        this.currentView = []; // Stocker les étapes actuellement affichées
+        this.currentStepIndex = 0; // Index pour suivre les étapes affichées par groupe
         this.render(shadow);
 
         const storedMessage = localStorage.getItem('activeMqInfo');
@@ -15,35 +17,15 @@ class DetailsComponent extends HTMLElement {
             }
         }
 
-
         document.addEventListener('route-updated', (event) => {
             const message = event.detail;
-        
-            // Vérifiez si le message est valide
+
             if (message && message.Pied) {
                 this.updateDetails(message);
             } else {
                 console.error('Message de route non valide reçu :', message);
             }
         });
-        
-
-        /*
-        let currentActiveMqInfo = localStorage.getItem('activeMqInfo');
-        console.log('*******LECTURE LOCAL STORAGE DETAILS ********');
-        let activeMqInfo = JSON.parse(currentActiveMqInfo);
-        console.log("1"+activeMqInfo);
-        console.log("2"+activeMqInfo[0]);
-        this.updateDetails(JSON.parse(activeMqInfo));
-        //localStorage.clear();
-        // Écouter les événements `details-update`
-        document.addEventListener('details-update', (event) => {
-            const message = event.detail.message;
-            console.log('Message reçu dans DetailsComponent:', message);
-
-            // Mettre à jour les détails avec le message reçu
-            this.updateDetails(JSON.parse(message));
-        });*/
     }
 
     render(shadow) {
@@ -54,16 +36,17 @@ class DetailsComponent extends HTMLElement {
     }
 
     updateDetails(message) {
-        // Mettre à jour les étapes
-        this.steps = message.features? message.features[0].properties.segments[0].steps : 
-            [
-                ...message.Pied1.features[0].properties.segments[0].steps,
-                ...message.Velo1.features[0].properties.segments[0].steps,
-                ...message.Pied2.features[0].properties.segments[0].steps
-            ];
+        this.steps = message.features
+            ? message.features[0].properties.segments[0].steps
+            : [
+                  ...message.Pied1.features[0].properties.segments[0].steps,
+                  ...message.Velo1.features[0].properties.segments[0].steps,
+                  ...message.Pied2.features[0].properties.segments[0].steps,
+              ];
+        this.currentStepIndex = 0; // Réinitialiser l'index
+        this.currentView = this.steps.slice(0, 10); // Afficher les 10 premières étapes
         this.updateDetailsView();
 
-        // Démarrer la mise à jour automatique si elle n'est pas encore active
         if (!this.interval) {
             this.startAutoUpdate();
         }
@@ -89,16 +72,35 @@ class DetailsComponent extends HTMLElement {
     }
 
     startAutoUpdate() {
-        this.interval = setInterval(() => {
-            if (this.steps.length > 1) {
-                this.steps.shift(); // Retirer la première étape
+        // Mise à jour des étapes toutes les 5 secondes
+        this.stepInterval = setInterval(() => {
+            if (this.currentView.length > 1) {
+                this.currentView.shift(); // Supprimer la première étape affichée
+                this.updateDetailsView();
+            } else if (this.steps.length > this.currentStepIndex + 10) {
+                console.log("Passage au groupe suivant d'étapes.");
+                this.currentStepIndex += 10;
+                this.currentView = this.steps.slice(this.currentStepIndex, this.currentStepIndex + 10);
                 this.updateDetailsView();
             } else {
-                console.log("Dernière étape atteinte. Arrêt de l'auto-update.");
-                clearInterval(this.interval); // Arrêter l'intervalle
-                this.interval = null;
+                console.log("Toutes les étapes ont été affichées.");
+                clearInterval(this.stepInterval);
+                this.stepInterval = null;
             }
-        }, 5000); // Mettre à jour toutes les 5 secondes
+        }, 5000); // Mise à jour toutes les 5 secondes
+
+        // Mise à jour du groupe d'étapes toutes les 50 secondes
+        this.groupInterval = setInterval(() => {
+            if (this.steps.length > this.currentStepIndex + 10) {
+                this.currentStepIndex += 10; // Passer au groupe suivant
+                this.currentView = this.steps.slice(this.currentStepIndex, this.currentStepIndex + 10);
+                this.updateDetailsView();
+            } else {
+                console.log("Toutes les étapes ont été affichées.");
+                clearInterval(this.groupInterval); // Arrêter la mise à jour des groupes
+                this.groupInterval = null;
+            }
+        }, 50000); // Mise à jour toutes les 50 secondes
     }
 
     updateDetailsView() {
@@ -106,12 +108,12 @@ class DetailsComponent extends HTMLElement {
         const container = this.shadowRoot.querySelector('.details-component-container');
         container.innerHTML = ''; // Réinitialiser les anciens détails
 
-        if (!this.steps || this.steps.length === 0) {
+        if (!this.currentView || this.currentView.length === 0) {
             this.addDetails("No remaining steps.", false);
             return;
         }
 
-        this.steps.forEach((step, index) => {
+        this.currentView.forEach((step, index) => {
             const distance = step.distance.toFixed(1); // Distance en mètres
             const duration = (step.duration / 60).toFixed(0); // Durée en minutes
             const instruction = step.instruction;
@@ -123,7 +125,7 @@ class DetailsComponent extends HTMLElement {
             this.addDetails(`Go for ${distance} meters (${duration} min)`, false);
 
             // Ajouter une séparation sauf après le dernier élément
-            if (index < this.steps.length - 1) {
+            if (index < this.currentView.length - 1) {
                 this.addSeparation();
             }
         });

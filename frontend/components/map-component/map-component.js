@@ -357,14 +357,12 @@ class MapComponent extends HTMLElement {
         // Initialiser les steps en fonction du mode
         if (parsedData.Velo1) {  
             // Combiner les steps de Pied1, Velo1, et Pied2
-            /*
             this.steps = [
                 ...parsedData.Pied1.features[0].properties.segments[0].steps,
                 ...parsedData.Velo1.features[0].properties.segments[0].steps,
                 ...parsedData.Pied2.features[0].properties.segments[0].steps
             ];
-            */
-            this.steps = parsedData.Pied1.features[0].properties.segments[0].steps;
+            //this.steps = parsedData.Pied1.features[0].properties.segments[0].steps;
             
             console.log("Steps pour le mode Vélo mis à jour depuis le localStorage :", this.steps);
         } else {
