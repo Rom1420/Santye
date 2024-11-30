@@ -55,7 +55,12 @@ class DetailsComponent extends HTMLElement {
 
     updateDetails(message) {
         // Mettre à jour les étapes
-        this.steps = message.Pied.features[0].properties.segments[0].steps;
+        this.steps = message.features? message.features[0].properties.segments[0].steps : 
+            [
+                ...message.Pied1.features[0].properties.segments[0].steps,
+                ...message.Velo1.features[0].properties.segments[0].steps,
+                ...message.Pied2.features[0].properties.segments[0].steps
+            ];
         this.updateDetailsView();
 
         // Démarrer la mise à jour automatique si elle n'est pas encore active
