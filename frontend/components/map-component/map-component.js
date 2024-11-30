@@ -7,6 +7,7 @@ class MapComponent extends HTMLElement {
         this.routeLayer = null; // Layer pour le chemin complet
         this.nextStepLayer = null; // Layer pour la prochaine étape
         this.steps = []; // Stocker les étapes localement
+        this.etape_waypoints = 0;
     }
 
     connectedCallback() {
@@ -237,10 +238,23 @@ class MapComponent extends HTMLElement {
                 this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
             } else {
                 this.map.removeLayer(this.currentMarker);
+                if(this.steps[currentStepIndex -1 ].way_points[0] > this.steps[currentStepIndex].way_points[0] + this.etape_waypoints){
+                    if(this.etape_waypoints == 0){
+                        console.log("++++ 1 way_points"+this.etape_waypoints);
+                        this.etape_waypoints += message.Pied1.features[0].geometry.coordinates.length;
+                        console.log("++++ 1.2 way_points"+this.etape_waypoints);
+                    }else{
+                        console.log("++++ 2 way_points"+this.etape_waypoints);
+                        this.etape_waypoints += message.Velo1.features[0].geometry.coordinates.length;
+                        console.log("++++ 2.2 way_points"+this.etape_waypoints);
+                    }
+                }
             }
 
             // Mettre un point bleu pour la position actuelle
-            const way_points = this.steps[currentStepIndex].way_points[0];
+            let way_points = this.steps[currentStepIndex].way_points[0] + this.etape_waypoints;
+            console.log("++++ 3 way_points"+this.etape_waypoints);
+            console.log("++++ 3.2 way_points"+way_points);
             this.currentMarker = L.circleMarker([coordinates[way_points][1], coordinates[way_points][0]],{
                 radius: 8,
                 color: 'blue',
