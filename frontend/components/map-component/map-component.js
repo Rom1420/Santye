@@ -185,124 +185,112 @@ class MapComponent extends HTMLElement {
             });
     }
 
-    updateRouteOnMap(message, currentStepIndex = 0) {
-        console.log(`Étape courante : ${currentStepIndex}`);
+    updateRouteOnMap(message, currentStepIndex = 0, start) {
         console.log('Mise à jour de la route sur la carte avec le message :', message);
+
+        if(message.features) {
+            //trajet a pied
+            if(start) {
+                const coordinates = message.features[0].geometry.coordinates;
+                    
+                const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+            
+                // Supprimer les couches existantes (route et point)
+                if (this.routeLayer) this.map.removeLayer(this.routeLayer);
+                if (this.currentMarker) this.map.removeLayer(this.currentMarker);
+            
+                // Tracer la route complète en noir
+                this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+            } else {
+                this.map.removeLayer(this.currentMarker);
+            }
+            
+            // Mettre un point bleu pour la position actuelle
+            const way_points = this.steps[currentStepIndex].way_points[0];
+            this.currentMarker = L.circleMarker([message.features[0].geometry.coordinates[way_points][1], message.features[0].geometry.coordinates[way_points][0]],{
+                radius: 8,
+                color: 'blue',
+                fillColor: 'blue',
+                fillOpacity: 0.8,
+            }).addTo(this.map);
     
-        // Combiner les coordonnées pour les trajets à pied et à vélo
-        /*
-        const coordinates = message.Velo1
-            ? [
+            // Centrer la carte sur la position actuelle
+            this.map.setView([message.features[0].geometry.coordinates[way_points][1], message.features[0].geometry.coordinates[way_points][0]], 70);
+
+        } else {
+            //trajet en vélo
+            const coordinates = [
                 ...message.Pied1.features[0].geometry.coordinates,
                 ...message.Velo1.features[0].geometry.coordinates,
                 ...message.Pied2.features[0].geometry.coordinates
-              ]
-            : message.features[0].geometry.coordinates;*/
-        console.log('MESSAGE:', message);
-        console.log('MESSAGE.PIED1:', message.Pied1);
-        console.log('MESSAGE.PIED1.FEATURES:', message.Pied1.features);
-        console.log('MESSAGE.PIED1.FEATURES[0]:', message.Pied1.features[0]);
-        console.log('MESSAGE.PIED1.FEATURES[0].GEOMETRY:', message.Pied1.features[0].geometry);
-        console.log('MESSAGE.PIED1.FEATURES[0].GEOMETRY.COORDINATES:', message.Pied1.features[0].geometry.coordinates);
-        const coordinates = message.Pied1.features[0].geometry.coordinates;
-        console.log('COORDINATES:', coordinates);
+            ];
+            console.log('COORDINATES', coordinates);
+
+            if(start) {
+                const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+            
+                // Supprimer les couches existantes (route et point)
+                if (this.routeLayer) this.map.removeLayer(this.routeLayer);
+                if (this.currentMarker) this.map.removeLayer(this.currentMarker);
+            
+                // Tracer la route complète en noir
+                this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+            } else {
+                this.map.removeLayer(this.currentMarker);
+            }
+
+            // Mettre un point bleu pour la position actuelle
+            const way_points = this.steps[currentStepIndex].way_points[0];
+            this.currentMarker = L.circleMarker([coordinates[way_points][1], coordinates[way_points][0]],{
+                radius: 8,
+                color: 'blue',
+                fillColor: 'blue',
+                fillOpacity: 0.8,
+            }).addTo(this.map);
     
-        // Supprimer les couches existantes
-        if (this.routeLayer) {
-            this.map.removeLayer(this.routeLayer);
+            // Centrer la carte sur la position actuelle
+            this.map.setView([coordinates[way_points][1], coordinates[way_points][0]], 70);
+
         }
-        if (this.nextStepLayer) {
-            this.map.removeLayer(this.nextStepLayer);
-        }
-        if (this.currentMarker) {
+        /*
+        if(start) {
+            const coordinates = message.Velo1
+            ? message.Pied1.features[0].geometry.coordinates
+            : message.features[0].geometry.coordinates;
+        
+            const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+        
+            // Supprimer les couches existantes (route et point)
+            if (this.routeLayer) this.map.removeLayer(this.routeLayer);
+            if (this.currentMarker) this.map.removeLayer(this.currentMarker);
+        
+            // Tracer la route complète en noir
+            this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+
+        }else{
             this.map.removeLayer(this.currentMarker);
         }
-        if (this.bikeRouteLayer) {
-            this.map.removeLayer(this.bikeRouteLayer);
-        }
-        if (this.stationMarkers) {
-            this.stationMarkers.forEach(marker => this.map.removeLayer(marker));
-        }
+
+        console.log("STEPS", this.steps);
+        console.log("STEPS CURRENTINDEX", this.steps[currentStepIndex]);
+        console.log("STEPS CURRENTINDEX WAYPOINTS", this.steps[currentStepIndex].way_points);
+        console.log("STEPS CURRENTINDEX WAYPOINTS 0", this.steps[currentStepIndex].way_points[0]);
     
-        this.stationMarkers = []; // Réinitialiser les marqueurs de stations
-        console.log('AAAAAAA');
-        // Garder uniquement les points non parcourus
-        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
-        console.log('BBBBBBB'+latLngs);
-        const remainingWaypoints = [];
-        for (let i = currentStepIndex; i < this.steps.length; i++) {
-            this.steps[i].way_points.forEach(index => {
-                if (!remainingWaypoints.includes(index)) {
-                    remainingWaypoints.push(index);
-                }
-            });
-        }
-    
-        // Tracer la route noire pour les étapes restantes (tout le trajet)
-        const remainingLatLngs = remainingWaypoints.map(index => latLngs[index]);
-        if (remainingLatLngs.length > 0) {
-            this.routeLayer = L.polyline(remainingLatLngs, { color: 'black', weight: 3 }).addTo(this.map);
-        }
-        
-        /*
-        // Partie vélo : mettre en évidence en vert
-        if (message.Velo1) {
-            const bikeCoords = message.Velo1.features[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
-            this.bikeRouteLayer = L.polyline(bikeCoords, { color: 'green', weight: 5 }).addTo(this.map);
-    
-            // Ajouter des marqueurs pour les stations (départ et arrivée du vélo)
-            const bikeStartStation = message.Velo1.features[0].geometry.coordinates[0]; // Première coordonnée
-            const bikeEndStation = message.Velo1.features[0].geometry.coordinates.at(-1); // Dernière coordonnée
-    
-            const bikeStartMarker = L.circleMarker([bikeStartStation[1], bikeStartStation[0]], {
+        // Mettre un point bleu pour la position actuelle
+        const way_points = this.steps[currentStepIndex].way_points[0];
+        if (way_points != null) {
+            this.currentMarker = L.circleMarker([message.Pied1.features[0].geometry.coordinates[way_points][1], message.Pied1.features[0].geometry.coordinates[way_points][0]],{
                 radius: 8,
-                color: 'green',
-                fillColor: 'green',
-                fillOpacity: 0.8
+                color: 'blue',
+                fillColor: 'blue',
+                fillOpacity: 0.8,
             }).addTo(this.map);
     
-            const bikeEndMarker = L.circleMarker([bikeEndStation[1], bikeEndStation[0]], {
-                radius: 8,
-                color: 'green',
-                fillColor: 'green',
-                fillOpacity: 0.8
-            }).addTo(this.map);
-    
-            this.stationMarkers.push(bikeStartMarker, bikeEndMarker);
-        }*/
-    
-        // Mettre en évidence l'étape actuelle en bleu
-        if (this.steps.length > currentStepIndex) {
-            const nextStepCoords = [];
-            this.steps[currentStepIndex].way_points.forEach(index => {
-                if (latLngs[index]) {
-                    nextStepCoords.push(latLngs[index]);
-                }
-            });
-    
-            if (nextStepCoords.length > 0) {
-                // Tracer la ligne bleue pour l'étape actuelle
-                this.nextStepLayer = L.polyline(nextStepCoords, { color: 'blue', weight: 5 }).addTo(this.map);
-    
-                // Ajouter un point bleu au début de l'étape actuelle
-                const startPoint = nextStepCoords[0];
-                this.currentMarker = L.circleMarker(startPoint, {
-                    radius: 8,
-                    color: 'blue',
-                    fillColor: 'blue',
-                    fillOpacity: 0.8
-                }).addTo(this.map);
-    
-                // Centrer la carte sur la route bleue avec un zoom accru
-                const bounds = L.latLngBounds(nextStepCoords);
-                const bufferedBounds = bounds.pad(0.3); // Légère marge pour le zoom
-                this.map.fitBounds(bufferedBounds, { padding: [50, 50] });
-            } else {
-                console.error(`Aucune coordonnée trouvée pour l'étape ${currentStepIndex}`);
-            }
+            // Centrer la carte sur la position actuelle
+            this.map.setView([message.Pied1.features[0].geometry.coordinates[way_points][1], message.Pied1.features[0].geometry.coordinates[way_points][0]], 70);
         } else {
-            console.log("Toutes les étapes ont été parcourues.");
-        }
+            console.error(`Aucune coordonnée trouvée pour l'étape ${currentStepIndex}`);
+        }*/
     
         // Mettre à jour l'ETA
         const etaContainer = this.querySelector('#ETA');
@@ -310,38 +298,35 @@ class MapComponent extends HTMLElement {
             const totalEta = this.calculateTotalEta(currentStepIndex);
             etaContainer.textContent = totalEta;
         }
-    }
-    
+    }  
     
     startStepAnimation(message) {
         let currentStepIndex = 0;
     
         // Mettre à jour la carte immédiatement pour la première étape
         console.log(`Affichage de la première étape`);
-        this.updateRouteOnMap(message, currentStepIndex);
-
-        // Démarrer l'intervalle pour les étapes suivantes
+        this.updateRouteOnMap(message, currentStepIndex,true);
+    
+        // Démarrer un intervalle pour déplacer le point bleu
         const interval = setInterval(() => {
             currentStepIndex++;
             if (currentStepIndex < this.steps.length) {
-                console.log(`Affichage de l'étape ${currentStepIndex + 1} sur ${this.steps.length}`);
-                this.updateRouteOnMap(message, currentStepIndex);
-    
-                // Supprimer les étapes déjà parcourues du message
-                this.steps = this.steps.slice(currentStepIndex);
+                console.log(`Mise à jour de la position actuelle : étape ${currentStepIndex + 1}`);
+                this.updateRouteOnMap(message, currentStepIndex,false);
             } else {
                 console.log("Toutes les étapes ont été affichées.");
-                clearInterval(interval); // Arrêter l'intervalle une fois toutes les étapes affichées
+                clearInterval(interval); // Arrêter l'intervalle une fois terminé
             }
-        }, 5000); // Relancer toutes les 5 secondes
-
-    }
+        }, 5000); // Mise à jour toutes les 5 secondes
+    }    
     
     
     calculateTotalEta(currentStepIndex) {
         // Filtrer les étapes restantes
+        console.log('Steps lenght avant ETA change :', this.steps.length);
         let remainingSteps = this.steps;
         remainingSteps = remainingSteps.slice(currentStepIndex);
+        console.log('Steps après avant ETA change :', this.steps.length);
     
         // Additionner les durées restantes
         const totalDurationInSeconds = remainingSteps.reduce((total, step) => total + step.duration, 0);
@@ -372,12 +357,13 @@ class MapComponent extends HTMLElement {
         // Initialiser les steps en fonction du mode
         if (parsedData.Velo1) {  
             // Combiner les steps de Pied1, Velo1, et Pied2
-            /** 
+            /*
             this.steps = [
                 ...parsedData.Pied1.features[0].properties.segments[0].steps,
                 ...parsedData.Velo1.features[0].properties.segments[0].steps,
                 ...parsedData.Pied2.features[0].properties.segments[0].steps
-            ];*/
+            ];
+            */
             this.steps = parsedData.Pied1.features[0].properties.segments[0].steps;
             
             console.log("Steps pour le mode Vélo mis à jour depuis le localStorage :", this.steps);
