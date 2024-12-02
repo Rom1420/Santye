@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Linq;
 
 
 namespace ConsoleApp_for_Self_Hosted_WS.Services
@@ -27,47 +28,56 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
 
         List<Contract> allContracts = null;
         ISession session = null;
-        
+
         public async Task<Itinerary> CalculateItinerary(string departure, string destination)
         {
-
-            if (departure == null || destination == null)
+            if (string.IsNullOrEmpty(departure) || string.IsNullOrEmpty(destination))
             {
-                return null;
+                throw new ArgumentException("Departure and destination must not be null or empty.");
             }
+
             setUp();
-            var coordsDepart = (0.0, 0.0);
-            var coordsDest = (0.0, 0.0);
-            if (!coordsRegex.IsMatch(departure))
-            {
-                coordsDepart = GetCoordinates(departure).Result;
-            }
-            else
-            {
-                coordsDepart = ParseCoordinates(departure);
-            }
-            if (!coordsRegex.IsMatch(destination))
-            {
-                coordsDest = GetCoordinates(destination).Result;
-            }
-            else
-            {
-                coordsDest = ParseCoordinates(destination);
-            }
-            // Find nearest JCDecaux stations
-            var stationDepart = GetNearestStation(coordsDepart).Result;
-            var stationDest = GetNearestStation(coordsDest).Result;
 
-            // verifier que ca vaut le coup
-            // Generate route between stations
-            var routePied1 = GetFootRoute(coordsDepart, stationDepart).Result;
-            var routeVelo = GetBikeRoute(stationDepart, stationDest).Result;
-            var routePied2 = GetFootRoute(stationDest, coordsDest).Result;
+            var coordsDepart = !coordsRegex.IsMatch(departure)
+                ? await GetCoordinates(departure)
+                : ParseCoordinates(departure);
 
-            SendToQueue(JsonSerializer.Serialize(routePied2));
+            var coordsDest = !coordsRegex.IsMatch(destination)
+                ? await GetCoordinates(destination)
+                : ParseCoordinates(destination);
 
-            return null;
+            var stationDepart = await GetNearestStation(coordsDepart);
+            var stationDest = await GetNearestStation(coordsDest);
+
+            var routePied1 = await GetFootRoute(coordsDepart, stationDepart);
+            var routeVelo = await GetBikeRoute(stationDepart, stationDest);
+            var routePied2 = await GetFootRoute(stationDest, coordsDest);
+
+            // Assemble all steps into the itinerary
+            var itinerary = new Itinerary
+            {
+                Steps = new List<Step>()
+            };
+
+            // Add steps from the routes
+            itinerary.Steps.AddRange(ParseSteps(routePied1, 1)); // Walking step type
+            itinerary.Steps.AddRange(ParseSteps(routeVelo, 2));  // Biking step type
+            itinerary.Steps.AddRange(ParseSteps(routePied2, 1)); // Walking step type
+
+            // Optionally send the result to the queue
+            const int batchSize = 10;
+            for (int i = 0; i < itinerary.Steps.Count; i += batchSize)
+            {
+                var batch = itinerary.Steps.Skip(i).Take(batchSize).ToList();
+
+                // Envoyer le paquet sous forme de JSON
+                SendToQueue(JsonSerializer.Serialize(batch));
+            }
+            zzzzz
+            Trace.WriteLine(JsonSerializer.Serialize(itinerary));
+            return itinerary;
         }
+
 
         private async Task<RouteResponse> GetFootRoute((double lat, double lon) station1, (double lat, double lon) station2)
         {
@@ -81,6 +91,25 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             // Parse response and extract route instructions (simplified for brevity)
             return road; // Example response
         }
+        private List<Step> ParseSteps(RouteResponse routeResponse, int stepType)
+        {
+            var steps = new List<Step>();
+            foreach (var segment in routeResponse.features[0].properties.segments)
+            {
+                steps.AddRange(segment.steps.Select(step => new Step
+                {
+                    distance = step.distance,
+                    duration = step.duration,
+                    type = stepType,
+                    instruction = step.instruction,
+                    name = step.name,
+                    way_points = step.way_points
+                }));
+            }
+            return steps;
+        }
+
+
         private async Task<RouteResponse> GetBikeRoute((double lat, double lon) station1, (double lat, double lon) station2)
         {
             var client = new HttpClient();
@@ -239,30 +268,27 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             return degrees * (Math.PI / 180);
         }
 
-        private void SendToQueue(string messageContent)
+        private void SendToQueue(string message)
         {
             try
             {
-                IDestination destination = session.GetQueue("itineraryQueue");
+                var factory = new Apache.NMS.ActiveMQ.ConnectionFactory("tcp://localhost:61616");
+                var connection = factory.CreateConnection();
+                var session = connection.CreateSession();
+                var destination = session.GetQueue("itineraryQueue");
+                var producer = session.CreateProducer(destination);
 
-                // Créer un producteur pour cette queue
-                using (IMessageProducer producer = session.CreateProducer(destination))
-                {
-                    Trace.WriteLine("hellooooooooooooooooooooo");
+                var textMessage = session.CreateTextMessage(message);
+                producer.Send(textMessage);
 
-                    producer.DeliveryMode = MsgDeliveryMode.NonPersistent;
-
-                    // Créer et envoyer le message
-                    ITextMessage message = session.CreateTextMessage(messageContent);
-                    producer.Send(message);
-                    Trace.WriteLine("message envoyé " + message);
-                }
+                Console.WriteLine("Message sent to queue: " + message);
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Console.WriteLine("Error sending message to queue: " + ex.Message);
             }
         }
+
 
         public class Station
         {

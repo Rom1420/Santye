@@ -14,6 +14,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
 
             // Créer un ServiceHost pour l'ItineraryService
             ServiceHost host = new ServiceHost(typeof(ItineraryService), httpUrl);
+            host.Description.Behaviors.Find<ServiceDebugBehavior>().IncludeExceptionDetailInFaults = true;
 
             // Ajouter un point de terminaison RESTful
             host.AddServiceEndpoint(typeof(IItineraryService), new WebHttpBinding(), "rest")
