@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\services\\openrouteserviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|c:\\users\\gwend\\desktop\\polytech\\si4-1\\middleware\\front\\santye\\backend\\consoleapp_for_self_hosted_ws\\consoleapp_for_self_hosted_ws\\services\\openrouteserviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\services\\openrouteserviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|c:\\users\\gwend\\desktop\\polytech\\si4-1\\middleware\\front\\santye\\backend\\consoleapp_for_self_hosted_ws\\consoleapp_for_self_hosted_ws\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\interafces\\icalculateitineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\interafces\\icalculateitineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\services\\itineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\services\\itineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\services\\proxyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\services\\genericcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\services\\genericcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|c:\\users\\gwend\\desktop\\polytech\\si4-1\\middleware\\front\\santye\\backend\\consoleapp_for_self_hosted_ws\\consoleapp_for_self_hosted_ws\\interafces\\icalculateitineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|solutionrelative:consoleapp_for_self_hosted_ws\\interafces\\icalculateitineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5037EC61-61E2-4253-9ED3-95D9344673C9}|ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS.csproj|C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\consoleapp_for_self_hosted_ws\\interafces\\iitineraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -53,7 +53,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "ICalculateItineraryService.cs",
               "DocumentMoniker": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Interafces\\ICalculateItineraryService.cs",
               "RelativeDocumentMoniker": "ConsoleApp_for_Self_Hosted_WS\\Interafces\\ICalculateItineraryService.cs",
@@ -77,7 +77,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "GenericCache.cs",
               "DocumentMoniker": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Services\\GenericCache.cs",
               "RelativeDocumentMoniker": "ConsoleApp_for_Self_Hosted_WS\\Services\\GenericCache.cs",
@@ -85,8 +85,7 @@
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Services\\GenericCache.cs",
               "ViewState": "AgIAABUAAAAAAAAAAAAwwCkAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T10:27:28.824Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T10:27:28.824Z"
             },
             {
               "$type": "Document",
@@ -96,7 +95,7 @@
               "RelativeDocumentMoniker": "ConsoleApp_for_Self_Hosted_WS\\Services\\OpenRouteServiceClient.cs",
               "ToolTip": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Services\\OpenRouteServiceClient.cs*",
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Services\\OpenRouteServiceClient.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAPgAAAAAAAAAAAAlwCgAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-25T10:06:34.488Z",
               "EditorCaption": ""
@@ -111,8 +110,7 @@
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Interafces\\IProxyService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T10:03:09.61Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T10:03:09.61Z"
             },
             {
               "$type": "Document",
@@ -124,12 +122,11 @@
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Models\\Itinerary.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T08:43:19.434Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T08:43:19.434Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ProxyService.cs",
               "DocumentMoniker": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Services\\ProxyService.cs",
               "RelativeDocumentMoniker": "ConsoleApp_for_Self_Hosted_WS\\Services\\ProxyService.cs",
@@ -137,8 +134,7 @@
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Services\\ProxyService.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAuwBwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T08:31:34.808Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T08:31:34.808Z"
             },
             {
               "$type": "Document",
@@ -150,8 +146,7 @@
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Interafces\\IItineraryService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T08:31:28.645Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T08:31:28.645Z"
             },
             {
               "$type": "Document",
@@ -168,16 +163,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Program.cs",
               "RelativeDocumentMoniker": "ConsoleApp_for_Self_Hosted_WS\\Program.cs",
               "ToolTip": "C:\\Users\\gwend\\Desktop\\Polytech\\SI4-1\\Middleware\\front\\Santye\\backend\\ConsoleApp_for_Self_Hosted_WS\\ConsoleApp_for_Self_Hosted_WS\\Program.cs",
               "RelativeToolTip": "ConsoleApp_for_Self_Hosted_WS\\Program.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAkwBgAAAAwAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T08:29:51.749Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T08:29:51.749Z"
             }
           ]
         }
