@@ -5,7 +5,7 @@ using System.ServiceModel.Web;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using SharedModels;
+using ConsoleApp_for_Self_Hosted_WS.Models;
 
 namespace ConsoleApp_for_Self_Hosted_WS.Services
 {

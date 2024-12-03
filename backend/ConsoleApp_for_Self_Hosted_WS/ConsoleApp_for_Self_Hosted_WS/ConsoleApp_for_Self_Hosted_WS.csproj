@@ -73,7 +73,6 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Text.Encodings.Web, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -98,11 +97,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connected Services\ProxyAndCacheService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Interafces\ICalculateItineraryService.cs" />
     <Compile Include="Interafces\IItineraryService.cs" />
     <Compile Include="Services\ItineraryService.cs" />
@@ -110,55 +104,16 @@
     <Compile Include="Services\OpenRouteServiceClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\GenericCache.cs" />
+    <Compile Include="Interafces\IProxyService.cs" />
+    <Compile Include="Services\ProxyService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Connected Services\ProxyAndCacheService\ConsoleApp_for_Self_Hosted_WS.ProxyAndCacheService.Itinerary.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\ProxyAndCacheService\ProxyService.wsdl" />
-    <None Include="Connected Services\ProxyAndCacheService\ProxyService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ProxyAndCacheService\ProxyService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ProxyAndCacheService\ProxyService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\ProxyAndCacheService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ProxyAndCacheService\ProxyService.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ProxyAndCacheService\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ProxyAndCacheService\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\ProxyAndCacheService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharedModels\SharedModels.csproj">
-      <Project>{52269e7e-df55-488a-a964-2684ffb4981c}</Project>
-      <Name>SharedModels</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(ProjectDir)App.config" "$(TargetDir)$(TargetName).exe.config"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

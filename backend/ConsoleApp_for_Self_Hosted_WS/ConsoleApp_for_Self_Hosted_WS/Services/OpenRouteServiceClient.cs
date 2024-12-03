@@ -1,6 +1,6 @@
 ﻿using Apache.NMS;
 using Apache.NMS.ActiveMQ;
-using SharedModels;
+using ConsoleApp_for_Self_Hosted_WS.Models;
 using ConsoleApp_for_Self_Hosted_WS.Services;
 using System;
 using System.Collections.Generic;
@@ -67,43 +67,10 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             var routeVelo = GetBikeRoute(stationDepart, stationDest).Result;
             var routePied2 = GetFootRoute(stationDest, coordsDest).Result;
 
-            var itinerary = new Itinerary
-            {
-                Steps = new List<SharedModels.Step>()
-            };
+            SendToQueue(JsonSerializer.Serialize(routePied2));
 
-            // Ajouter les étapes de routePied1
-            if (routePied1.features != null && routePied1.features.Count > 0)
-            {
-                foreach (var segment in routePied1.features[0].properties.segments)
-                {
-                    itinerary.Steps.AddRange(segment.steps.Select(s => new SharedModels.Step
-                    {
-                        Instruction = s.instruction,
-                        Distance = s.distance
-                    }));
-                }
-            }
-
-            // Ajouter les étapes de routePied2
-            if (routePied2.features != null && routePied2.features.Count > 0)
-            {
-                foreach (var segment in routePied2.features[0].properties.segments)
-                {
-                    itinerary.Steps.AddRange(segment.steps.Select(s => new SharedModels.Step
-                    {
-                        Instruction = s.instruction,
-                        Distance = s.distance
-                    }));
-                }
-            }
-
-            // Envoyer l'itinéraire à la file d'attente
-            SendToQueue(JsonSerializer.Serialize(itinerary));
-
-            return itinerary;
-  
-    }
+            return null;
+        }
 
         private async Task<RouteResponse> GetFootRoute((double lat, double lon) station1, (double lat, double lon) station2)
         {
