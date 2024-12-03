@@ -30,80 +30,56 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
 
         List<Contract> allContracts = null;
         ISession session = null;
-        
+
         public async Task<Itinerary> CalculateItinerary(string departure, string destination)
         {
+            if (string.IsNullOrWhiteSpace(departure) || string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentException("Les adresses de départ et de destination doivent être spécifiées.");
+            }
 
-            if (departure == null || destination == null)
-            {
-                return null;
-            }
-            setUp();
-            var coordsDepart = (0.0, 0.0);
-            var coordsDest = (0.0, 0.0);
-            if (!coordsRegex.IsMatch(departure))
-            {
-                coordsDepart = GetCoordinates(departure).Result;
-            }
-            else
-            {
-                coordsDepart = ParseCoordinates(departure);
-            }
-            if (!coordsRegex.IsMatch(destination))
-            {
-                coordsDest = GetCoordinates(destination).Result;
-            }
-            else
-            {
-                coordsDest = ParseCoordinates(destination);
-            }
-            // Find nearest JCDecaux stations
-            var stationDepart = GetNearestStation(coordsDepart).Result;
-            var stationDest = GetNearestStation(coordsDest).Result;
+            setUp(); // Configurer ActiveMQ et récupérer les contrats JCDecaux
 
-            // verifier que ca vaut le coup
-            // Generate route between stations
-            var routePied1 = GetFootRoute(coordsDepart, stationDepart).Result;
-            var routeVelo = GetBikeRoute(stationDepart, stationDest).Result;
-            var routePied2 = GetFootRoute(stationDest, coordsDest).Result;
+            // Obtenir les coordonnées des adresses
+            var coordsDepart = coordsRegex.IsMatch(departure) ? ParseCoordinates(departure) : await GetCoordinates(departure);
+            var coordsDest = coordsRegex.IsMatch(destination) ? ParseCoordinates(destination) : await GetCoordinates(destination);
 
-            var itinerary = new Itinerary
+            // Construire l'itinéraire structuré
+            var structuredItinerary = await BuildCompleteStructuredItinerary(coordsDepart, coordsDest);
+
+            // Envoyer les données structurées dans la queue
+            SendToQueue(JsonSerializer.Serialize(structuredItinerary));
+
+            return null;
+        }
+
+        private async Task<object> BuildCompleteStructuredItinerary((double lat, double lon) coordsDepart, (double lat, double lon) coordsDest)
+        {
+            // Récupérer les stations les plus proches
+            var stationDepart = await GetNearestStation(coordsDepart);
+            var stationDest = await GetNearestStation(coordsDest);
+
+            // Obtenir les itinéraires individuels
+            var routePiedTotal = await GetFootRoute(coordsDepart, coordsDest);
+            var routePied1 = await GetFootRoute(coordsDepart, stationDepart);
+            var routeVelo = await GetBikeRoute(stationDepart, stationDest);
+            var routePied2 = await GetFootRoute(stationDest, coordsDest);
+
+            // Structurer les données
+            var structuredItinerary = new
             {
-                Steps = new List<SharedModels.Step>()
+                Pied = routePiedTotal,
+                Velo = new
+                {
+                    Pied1 = routePied1,
+                    Velo1 = routeVelo,
+                    Pied2 = routePied2
+                }
             };
 
-            // Ajouter les étapes de routePied1
-            if (routePied1.features != null && routePied1.features.Count > 0)
-            {
-                foreach (var segment in routePied1.features[0].properties.segments)
-                {
-                    itinerary.Steps.AddRange(segment.steps.Select(s => new SharedModels.Step
-                    {
-                        Instruction = s.instruction,
-                        Distance = s.distance
-                    }));
-                }
-            }
+            return structuredItinerary;
+        }
 
-            // Ajouter les étapes de routePied2
-            if (routePied2.features != null && routePied2.features.Count > 0)
-            {
-                foreach (var segment in routePied2.features[0].properties.segments)
-                {
-                    itinerary.Steps.AddRange(segment.steps.Select(s => new SharedModels.Step
-                    {
-                        Instruction = s.instruction,
-                        Distance = s.distance
-                    }));
-                }
-            }
-
-            // Envoyer l'itinéraire à la file d'attente
-            SendToQueue(JsonSerializer.Serialize(itinerary));
-
-            return itinerary;
-  
-    }
 
         private async Task<RouteResponse> GetFootRoute((double lat, double lon) station1, (double lat, double lon) station2)
         {
@@ -281,22 +257,19 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             {
                 IDestination destination = session.GetQueue("itineraryQueue");
 
-                // Créer un producteur pour cette queue
                 using (IMessageProducer producer = session.CreateProducer(destination))
                 {
-                    Trace.WriteLine("hellooooooooooooooooooooo");
-
                     producer.DeliveryMode = MsgDeliveryMode.NonPersistent;
 
-                    // Créer et envoyer le message
                     ITextMessage message = session.CreateTextMessage(messageContent);
                     producer.Send(message);
-                    Trace.WriteLine("message envoyé " + message);
+
+                    Trace.WriteLine("Message structuré envoyé dans la queue: " + messageContent);
                 }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Trace.WriteLine("Erreur lors de l'envoi dans la queue: " + ex.Message);
             }
         }
 
