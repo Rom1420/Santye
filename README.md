@@ -30,7 +30,7 @@ root/
 │   ├── index.html
 │   └── README.md                 # Documentation sur le frontend
 |
-├── backend-csharp/               # Projet backend en C#
+├── backend/               # Projet backend en C#
 │   ├── ConsoleApp_for_Self_Hosted_WS/
 │   │   ├── Program.cs            # Point d'entrée pour le Routing Server
 │   │   ├── Interfaces/
@@ -39,7 +39,7 @@ root/
 │   │   └── ConsoleApp_for_Self_Hosted_WS.sln
 │   └── README.md                 # Documentation sur le backend
 |
-├── heavy-client-java/            # Client lourd en Java pour communiquer via SOAP
+├── java/            # Client lourd en Java pour communiquer via SOAP
 │   ├── pom.xml                   # Configuration Maven
 │   ├── src/
 │   │   ├── main/
