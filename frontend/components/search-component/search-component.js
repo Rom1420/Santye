@@ -104,6 +104,9 @@ class SearchComponent extends HTMLElement {
         this.correctInputs();*/
         const departValue = this.departInput.value.trim();
         const destinationValue = this.destinationInput.value.trim();
+        this.verifyInput(departValue, destinationValue);
+        if(departValue && destinationValue){
+            this.correctInputs();
             this.getItinerary(departValue, destinationValue)
             .then(queueName => {
                 this.contectToActiveMq();
@@ -111,12 +114,29 @@ class SearchComponent extends HTMLElement {
                 this.expandSearchContainer();
                 this.removeValidationButton();
                 this.createPermuteButton();
-                this.correctInputs();
             })
             .catch(error => {
                 console.error("Error fetching itinerary:", error);
             });
+        }
+        
+            
         console.log(`******************************************${departValue} ${destinationValue}******************************************`);
+    }
+
+    verifyInput(depart, destination){
+        if(depart && !destination){
+            this.correctInputs();
+            this.wrongInput("destination");
+        }
+        if (!depart && !destination ){
+            this.wrongInput("depart");
+            this.wrongInput("destination");
+        }
+        if (!depart && destination ){
+            this.correctInputs();
+            this.wrongInput("depart");
+        }
     }
 /*
     async validateItinerary(departure, destination) {
@@ -240,6 +260,10 @@ class SearchComponent extends HTMLElement {
     swapInputs() {
         const departInput = this.querySelector('.depart-container input');
         const destinationInput = this.querySelector('.destination-container input');
+        const transportsButtons = document.querySelector('transports-buttons');
+        transportsButtons.setAttribute('timePied', '?');
+        transportsButtons.setAttribute('timeVelo', '?');
+        transportsButtons.render(transportsButtons.shadowRoot);
 
         const temp = departInput.value;
         departInput.value = destinationInput.value;
@@ -518,6 +542,7 @@ class SearchComponent extends HTMLElement {
     }
     
     setTimes() {
+        console.log('set time called')
         // Initialiser les valeurs piedTime et veloTime à 0
         let piedTimeTotal = 0;
         let veloTimeTotal = 0;
