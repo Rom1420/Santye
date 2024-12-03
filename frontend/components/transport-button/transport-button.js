@@ -9,6 +9,10 @@ class TransportButton extends HTMLElement {
         if (this.getAttribute('etat') === 'map-displayed') {
             this.mapDisplayed();
         }
+        const time = this.getAttribute('time');
+        if (time === '?') {
+            this.showLoading();  
+        }
     }
 
     render(shadow) {
@@ -24,7 +28,8 @@ class TransportButton extends HTMLElement {
                 <div class="transport-button">
                     <span><i class="fa-solid ${icon}"></i></span>
                 </div>
-                <p class="time">${time} min</p>
+                <p class="time">${time}</p>
+                <div class="loading-spinner" style="display: none;"><span class="loader"></span></div>
             </div>
         `;
     }
@@ -36,6 +41,14 @@ class TransportButton extends HTMLElement {
 
         const time = this.shadowRoot.querySelector('.time');
         time.classList.add('map-displayed')
+    }
+
+    showLoading() {
+        const timeElement = this.shadowRoot.querySelector('.time');
+        const spinner = this.shadowRoot.querySelector('.loading-spinner');
+        
+        timeElement.style.display = 'none'; 
+        spinner.style.display = 'inline-block';
     }
 }
 
