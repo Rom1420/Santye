@@ -19,8 +19,7 @@
   <a href="#démarrage-des-services">Démarrage des Services</a> •
   <a href="#fonctionnalités">Fonctionnalités</a> •
   <a href="#technologies-utilisées">Technologies Utilisées</a> •
-  <a href="#documentation-supplémentaire">Documentation Supplémentaire</a> •
-  <a href="#team">Team</a>
+  <a href="#documentation-supplémentaire">Documentation Supplémentaire</a> 
 </p>
 
 ---
@@ -125,7 +124,6 @@ Pour démarrer tous les services nécessaires :
 
 ## Documentation Supplémentaire
 
-Pour plus de détails, veuillez consulter les README des différentes parties du projet :
+Pour plus de détails, veuillez consulter le README des différentes parties du projet :
 
-- [Frontend](./frontend/README.md)
 - [Backend](./backend/README.md)
