@@ -74,34 +74,24 @@ class DetailsComponent extends HTMLElement {
     startAutoUpdate() {
         // Mise à jour des étapes toutes les 5 secondes
         this.stepInterval = setInterval(() => {
+            console.log("etape consommé");
+            // Vérifier s'il reste encore des étapes à afficher dans le currentView
             if (this.currentView.length > 1) {
                 this.currentView.shift(); // Supprimer la première étape affichée
-                this.updateDetailsView();
-            } else if (this.steps.length > this.currentStepIndex + 10) {
-                console.log("Passage au groupe suivant d'étapes.");
-                this.currentStepIndex += 10;
+            } else if (this.steps.length > this.currentStepIndex + this.currentView.length) {
+                // Passer au groupe suivant
+                this.currentStepIndex += this.currentView.length;
                 this.currentView = this.steps.slice(this.currentStepIndex, this.currentStepIndex + 10);
-                this.updateDetailsView();
+                console.log("groupe de 10 fini "+this.currentStepIndex+" "+this.currentView);
             } else {
+                // Plus d'étapes à afficher
                 console.log("Toutes les étapes ont été affichées.");
                 clearInterval(this.stepInterval);
                 this.stepInterval = null;
             }
+            this.updateDetailsView();
         }, 5000); // Mise à jour toutes les 5 secondes
-
-        // Mise à jour du groupe d'étapes toutes les 50 secondes
-        this.groupInterval = setInterval(() => {
-            if (this.steps.length > this.currentStepIndex + 10) {
-                this.currentStepIndex += 10; // Passer au groupe suivant
-                this.currentView = this.steps.slice(this.currentStepIndex, this.currentStepIndex + 10);
-                this.updateDetailsView();
-            } else {
-                console.log("Toutes les étapes ont été affichées.");
-                clearInterval(this.groupInterval); // Arrêter la mise à jour des groupes
-                this.groupInterval = null;
-            }
-        }, 50000); // Mise à jour toutes les 50 secondes
-    }
+    }    
 
     updateDetailsView() {
         console.log('Mise à jour des détails...');

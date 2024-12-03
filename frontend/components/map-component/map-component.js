@@ -8,6 +8,8 @@ class MapComponent extends HTMLElement {
         this.nextStepLayer = null; // Layer pour la prochaine étape
         this.steps = []; // Stocker les étapes localement
         this.etape_waypoints = 0;
+        this.dernierWayPointPied1 = 0;
+        this.dernierWayPointVelo1 =0;
     }
 
     connectedCallback() {
@@ -22,6 +24,7 @@ class MapComponent extends HTMLElement {
         if (storedMessage) {
             try {
                 const message = JSON.parse(storedMessage);
+                this.traiterMessage(message);
                 this.updateSteps();
                 this.startStepAnimation(message);
             } catch (error) {
@@ -37,6 +40,7 @@ class MapComponent extends HTMLElement {
             if (message && message.Pied) {
                 // Appeler les fonctions avec le message
                 //this.updateRouteOnMap(message);
+                this.traiterMessage(message);
                 this.updateSteps();
                 this.startStepAnimation(message);
             } else {
@@ -225,27 +229,38 @@ class MapComponent extends HTMLElement {
                 ...message.Velo1.features[0].geometry.coordinates,
                 ...message.Pied2.features[0].geometry.coordinates
             ];
-            console.log('COORDINATES', coordinates);
 
             if(start) {
                 const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+
+                const latLngsPied1 = latLngs.slice(0, this.dernierWayPointPied1);
+                const latLngsVelo1 = latLngs.slice(this.dernierWayPointPied1 +1, this.dernierWayPointPied1 +1 + this.dernierWayPointVelo1);
+                const latLngsPied2 = latLngs.slice(this.dernierWayPointPied1 + this.dernierWayPointVelo1 +2);
             
                 // Supprimer les couches existantes (route et point)
-                if (this.routeLayer) this.map.removeLayer(this.routeLayer);
+                if (this.routeLayerPied1) this.map.removeLayer(this.routeLayerPied1);
+                if (this.routeLayerVelo) this.map.removeLayer(this.routeLayerVelo);
+                if (this.routeLayerPied2) this.map.removeLayer(this.routeLayerPied2);
                 if (this.currentMarker) this.map.removeLayer(this.currentMarker);
             
-                // Tracer la route complète en noir
-                this.routeLayer = L.polyline(latLngs, { color: 'black', weight: 3 }).addTo(this.map);
+                // Tracer la partie avant vélo (Pied1) en noir
+                this.routeLayerPied1 = L.polyline(latLngsPied1, { color: 'black', weight: 3 }).addTo(this.map);
+            
+                // Tracer la partie en vélo (Velo1) en rouge
+                this.routeLayerVelo = L.polyline(latLngsVelo1, { color: 'green', weight: 3 }).addTo(this.map);
+            
+                // Tracer la partie après vélo (Pied2) en noir
+                this.routeLayerPied2 = L.polyline(latLngsPied2, { color: 'black', weight: 3 }).addTo(this.map);
             } else {
                 this.map.removeLayer(this.currentMarker);
                 if(this.steps[currentStepIndex -1 ].way_points[0] > this.steps[currentStepIndex].way_points[0] + this.etape_waypoints){
                     if(this.etape_waypoints == 0){
                         console.log("++++ 1 way_points"+this.etape_waypoints);
-                        this.etape_waypoints += message.Pied1.features[0].geometry.coordinates.length;
+                        this.etape_waypoints += this.dernierWayPointPied1 +1;
                         console.log("++++ 1.2 way_points"+this.etape_waypoints);
                     }else{
                         console.log("++++ 2 way_points"+this.etape_waypoints);
-                        this.etape_waypoints += message.Velo1.features[0].geometry.coordinates.length;
+                        this.etape_waypoints += this.dernierWayPointVelo1 +1;
                         console.log("++++ 2.2 way_points"+this.etape_waypoints);
                     }
                 }
@@ -392,8 +407,16 @@ class MapComponent extends HTMLElement {
             console.log("Steps pour le mode Pied mis à jour depuis le localStorage :", this.steps);
         }
 
-    }    
+    } 
     
+    traiterMessage(message) {
+        if (message.Pied1 && message.Velo1 && message.Pied2) {
+            this.dernierWayPointPied1 = message.Pied1.features[0].properties.way_points[1];
+            this.dernierWayPointVelo1 = message.Velo1.features[0].properties.way_points[1];
+
+            console.log("les derniers waypoints pied : "+this.dernierWayPointPied1 + " pour le vélo : "+this.dernierWayPointVelo1)
+        } 
+    }
 }
 
 customElements.define('map-component', MapComponent);
