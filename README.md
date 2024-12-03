@@ -124,7 +124,6 @@ Pour démarrer tous les services nécessaires :
 
 ## Documentation Supplémentaire
 
-Pour plus de détails, veuillez consulter les README des différentes parties du projet :
+Pour plus de détails, veuillez consulter le README des différentes parties du projet :
 
-- [Frontend](./frontend/README.md)
 - [Backend](./backend/README.md)
