@@ -19,8 +19,7 @@
   <a href="#démarrage-des-services">Démarrage des Services</a> •
   <a href="#fonctionnalités">Fonctionnalités</a> •
   <a href="#technologies-utilisées">Technologies Utilisées</a> •
-  <a href="#documentation-supplémentaire">Documentation Supplémentaire</a> •
-  <a href="#team">Team</a>
+  <a href="#documentation-supplémentaire">Documentation Supplémentaire</a> 
 </p>
 
 ---
