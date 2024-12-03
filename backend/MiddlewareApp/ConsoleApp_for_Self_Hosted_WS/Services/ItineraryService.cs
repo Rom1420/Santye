@@ -28,28 +28,20 @@ public class ItineraryService : IItineraryService
     new EndpointAddress("http://localhost:8081/ProxyService")
 );
 
-    public async Task<SharedItinerary> GetItinerary(string departure, string destination)
+    public async void GetItinerary(string departure, string destination)
     {
         // Appel au service proxy via SOAP
         try
         {
             Console.WriteLine("Calling GetItineraryAsync...");
+            Console.WriteLine($"Calling ProxyService at {_proxyServiceClient.Endpoint.Address}");
             ProxyItinerary proxyResult = await _proxyServiceClient.GetItineraryAsync(departure, destination);
             Console.WriteLine("Service call completed.");
-            return new SharedItinerary
-            {
-                Steps = proxyResult.Steps == null
-                    ? null
-                    : Array.ConvertAll(proxyResult.Steps, proxyStep => new SharedStep
-                    {
-                        Instruction = proxyStep.Instruction,
-                        Distance = proxyStep.Distance
-                    }).ToList()
-            };
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Exception: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
             throw;
         }
     }

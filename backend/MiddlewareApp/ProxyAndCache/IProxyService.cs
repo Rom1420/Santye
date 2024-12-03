@@ -9,7 +9,8 @@ namespace ProxyAndCache
     public interface IProxyService
     {
         [OperationContract]
-        Task<Itinerary> GetItinerary(string departure, string destination);
+        [WebInvoke(Method = "POST", UriTemplate = "/ProxyService", RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml)]
+        void GetItinerary(string departure, string destination);
 
     }
 }

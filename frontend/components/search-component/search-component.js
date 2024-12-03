@@ -192,6 +192,8 @@ class SearchComponent extends HTMLElement {
     expandSearchContainer() {
         const searchContainer = this.querySelector('.search-container');
         searchContainer.classList.add('expanded');
+        const inputsContainer = this.querySelector('.inputs-container');
+        inputsContainer.classList.add('expanded');
     }
 
     removeValidationButton() {
@@ -577,7 +579,7 @@ class SearchComponent extends HTMLElement {
         } else {
             const hours = Math.floor(piedTimeTotal / 60);
             const minutes = piedTimeTotal % 60;
-            piedTimeFormatted = minutes > 0 ? `${hours}h${minutes}` : `${hours}h`;
+            piedTimeFormatted = minutes > 0 ? `${hours} h ${minutes}` : `${hours} h`;
         }
 
         let veloTimeFormatted = '';
@@ -586,7 +588,7 @@ class SearchComponent extends HTMLElement {
         } else {
             const hours = Math.floor(veloTimeTotal / 60);
             const minutes = veloTimeTotal % 60;
-            veloTimeFormatted = minutes > 0 ? `${hours}h${minutes}` : `${hours}h`;
+            veloTimeFormatted = minutes > 0 ? `${hours} h ${minutes}` : `${hours} h`;
         }
 
         const transportsButtons = document.querySelector('transports-buttons');

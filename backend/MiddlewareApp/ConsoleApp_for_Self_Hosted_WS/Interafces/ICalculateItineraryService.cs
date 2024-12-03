@@ -14,6 +14,6 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
     {
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "/CalculateItinerary?departure={departure}&arrival={arrival}")]
-        Task<Itinerary> CalculateItinerary(string departure, string arrival);
+        Task<object> CalculateItinerary(string departure, string arrival);
     }
 }

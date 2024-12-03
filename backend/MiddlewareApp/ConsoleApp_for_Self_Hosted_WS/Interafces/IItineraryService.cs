@@ -16,7 +16,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
     {
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "/GetItinerary?departure={departure}&arrival={arrival}")]
-        Task<SharedModels.Itinerary> GetItinerary(string departure, string arrival);
+        void GetItinerary(string departure, string arrival);
     }
 
 }

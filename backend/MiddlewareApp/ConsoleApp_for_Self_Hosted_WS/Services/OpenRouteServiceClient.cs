@@ -31,7 +31,7 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
         List<Contract> allContracts = null;
         ISession session = null;
 
-        public async Task<Itinerary> CalculateItinerary(string departure, string destination)
+        public async Task<object> CalculateItinerary(string departure, string destination)
         {
             if (string.IsNullOrWhiteSpace(departure) || string.IsNullOrWhiteSpace(destination))
             {
@@ -47,10 +47,7 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             // Construire l'itinéraire structuré
             var structuredItinerary = await BuildCompleteStructuredItinerary(coordsDepart, coordsDest);
 
-            // Envoyer les données structurées dans la queue
-            SendToQueue(JsonSerializer.Serialize(structuredItinerary));
-
-            return null;
+            return structuredItinerary;
         }
 
         private async Task<object> BuildCompleteStructuredItinerary((double lat, double lon) coordsDepart, (double lat, double lon) coordsDest)
@@ -123,6 +120,12 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
 
         public void setUp()
         {
+            if (session != null)
+            {
+                // La session est déjà initialisée, pas besoin de recommencer
+                Trace.WriteLine("La session est déjà initialisée.");
+                return;
+            }
             allContracts = getAllContracts().Result;
             try
             {
@@ -134,7 +137,7 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
 
                 session = connection.CreateSession();
 
-                Trace.WriteLine($"connected to activeMq");
+                Console.WriteLine($"connected to activeMq");
             }
             catch (Exception ex)
             {
@@ -251,10 +254,21 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
             return degrees * (Math.PI / 180);
         }
 
-        private void SendToQueue(string messageContent)
+        public void SendToQueue(string messageContent)
         {
             try
             {
+                if (session == null)
+                {
+                    Console.WriteLine("Session est null, initialisation...");
+                    setUp();  // Initialisation de la session si elle est null
+                }
+
+                if (session == null)
+                {
+                    throw new InvalidOperationException("La session n'a pas pu être initialisée.");
+                }
+
                 IDestination destination = session.GetQueue("itineraryQueue");
 
                 using (IMessageProducer producer = session.CreateProducer(destination))
@@ -264,12 +278,12 @@ namespace ConsoleApp_for_Self_Hosted_WS.Services
                     ITextMessage message = session.CreateTextMessage(messageContent);
                     producer.Send(message);
 
-                    Trace.WriteLine("Message structuré envoyé dans la queue: " + messageContent);
+                    Console.WriteLine("Message structuré envoyé dans la queue: " + messageContent);
                 }
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("Erreur lors de l'envoi dans la queue: " + ex.Message);
+                Console.WriteLine("Erreur lors de l'envoi dans la queue: " + ex.Message);
             }
         }
 
