@@ -24,7 +24,7 @@ class TransportButton extends HTMLElement {
                 <div class="transport-button">
                     <span><i class="fa-solid ${icon}"></i></span>
                 </div>
-                <p class="time">${time} min</p>
+                <p class="time">${time}</p>
             </div>
         `;
     }

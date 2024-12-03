@@ -91,7 +91,7 @@ class DetailsComponent extends HTMLElement {
                 this.stepInterval = null;
             }
             this.updateDetailsView();
-        }, 5000); // Mise à jour toutes les 5 secondes
+        }, 2000); // Mise à jour toutes les 5 secondes
     }    
 
     updateDetailsView() {

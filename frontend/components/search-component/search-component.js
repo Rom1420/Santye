@@ -567,26 +567,41 @@ class SearchComponent extends HTMLElement {
             });
         }
 
-        const transportsButtons = document.querySelector('transports-buttons');
-        transportsButtons.setAttribute('timePied', Math.round(piedTimeTotal / 60));
-        transportsButtons.setAttribute('timeVelo', Math.round(veloTimeTotal / 60));
-        transportsButtons.render(transportsButtons.shadowRoot);
-        //const buttons = transportsButtons.shadowRoot.querySelectorAll('.transport-button');
-        //console.log("selection de la selection mdr "+buttons[0]);
-        console.log("le query : "+transportsButtons.shadowRoot.querySelector("#pied"));
+        console.log("la fait fait mes changements");
+        piedTimeTotal = Math.round(piedTimeTotal / 60);
+        veloTimeTotal = Math.round(veloTimeTotal / 60);
 
-        // Ajouter un écouteur pour le premier bouton (piéton)
+        let piedTimeFormatted = '';
+        if (piedTimeTotal < 60) {
+            piedTimeFormatted = `${piedTimeTotal}m`;
+        } else {
+            const hours = Math.floor(piedTimeTotal / 60);
+            const minutes = piedTimeTotal % 60;
+            piedTimeFormatted = minutes > 0 ? `${hours}h${minutes}` : `${hours}h`;
+        }
+
+        let veloTimeFormatted = '';
+        if (veloTimeTotal < 60) {
+            veloTimeFormatted = `${veloTimeTotal}m`;
+        } else {
+            const hours = Math.floor(veloTimeTotal / 60);
+            const minutes = veloTimeTotal % 60;
+            veloTimeFormatted = minutes > 0 ? `${hours}h${minutes}` : `${hours}h`;
+        }
+
+        const transportsButtons = document.querySelector('transports-buttons');
+        transportsButtons.setAttribute('timePied', piedTimeFormatted);
+        transportsButtons.setAttribute('timeVelo', veloTimeFormatted);
+        transportsButtons.render(transportsButtons.shadowRoot);
+
         transportsButtons.shadowRoot.querySelector("#pied").addEventListener('click', () => {
-            console.log("j'crois j'arrive jamais la");
             if (!this.classList.contains('map-displayed')) {
                 this.velo = false;
                 this.replaceWithMapComponent();
             }
         });
 
-        // Ajouter un écouteur pour le deuxième bouton (vélo)
         transportsButtons.shadowRoot.querySelector("#velo").addEventListener('click', () => {
-            console.log("j'suis la ??");
             if (!this.classList.contains('map-displayed')) {
                 this.velo = true;
                 this.replaceWithMapComponent();

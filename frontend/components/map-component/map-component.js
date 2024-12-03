@@ -346,7 +346,7 @@ class MapComponent extends HTMLElement {
                 console.log("Toutes les étapes ont été affichées.");
                 clearInterval(interval); // Arrêter l'intervalle une fois terminé
             }
-        }, 5000); // Mise à jour toutes les 5 secondes
+        }, 2000); // Mise à jour toutes les 5 secondes
     }    
     
     
