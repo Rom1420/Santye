@@ -45,7 +45,7 @@ class DetailsComponent extends HTMLElement {
               ];
         this.currentStepIndex = 0; // Réinitialiser l'index
         this.currentView = this.steps.slice(0, 10); // Afficher les 10 premières étapes
-        this.updateDetailsView();
+        //this.updateDetailsView();
 
         if (!this.interval) {
             this.startAutoUpdate();
@@ -73,6 +73,7 @@ class DetailsComponent extends HTMLElement {
 
     startAutoUpdate() {
         // Mise à jour des étapes toutes les 5 secondes
+        this.updateDetailsView(); //premier appel
         this.stepInterval = setInterval(() => {
             console.log("etape consommé");
             // Vérifier s'il reste encore des étapes à afficher dans le currentView
@@ -80,7 +81,7 @@ class DetailsComponent extends HTMLElement {
                 this.currentView.shift(); // Supprimer la première étape affichée
             } else if (this.steps.length > this.currentStepIndex + this.currentView.length) {
                 // Passer au groupe suivant
-                this.currentStepIndex += this.currentView.length;
+                this.currentStepIndex += 10;
                 this.currentView = this.steps.slice(this.currentStepIndex, this.currentStepIndex + 10);
                 console.log("groupe de 10 fini "+this.currentStepIndex+" "+this.currentView);
             } else {
