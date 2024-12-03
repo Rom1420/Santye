@@ -1,6 +1,5 @@
 package com.santye.client;
 
-import com.santye.client.generated.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
