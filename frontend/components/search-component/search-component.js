@@ -4,7 +4,7 @@ class SearchComponent extends HTMLElement {
         this.render();
 
         this.parsedMessage = null;
-        this.velo = true;
+        this.velo = false;
         
         this.departInput = this.querySelector('.depart-container input');
         this.destinationInput = this.querySelector('.destination-container input');
@@ -152,14 +152,34 @@ class SearchComponent extends HTMLElement {
 
     createTransportButtons() {
         const inputsContainer = this.querySelector('.inputs-container');
+        //this.setTimes();
         const newTransportsButtons = document.createElement('transports-buttons');
+        /*
+        if (newTransportsButtons) {
+            console.log("OUI");
+            const buttons = newTransportsButtons.querySelectorAll('.transport-button');
+            console.log("selection de la selection mdr "+buttons[0]);
+            if (buttons.length >= 2) {
+                console.log("dans le ifffffffffff");
+                // Ajouter un écouteur pour le premier bouton (piéton)
+                buttons[0].addEventListener('click', () => {
+                    console.log("j'crois j'arrive jamais la");
+                    if (!this.classList.contains('map-displayed')) {
+                        this.replaceWithMapComponent();
+                        this.velo = false;
+                    }
+                });
 
-        newTransportsButtons.addEventListener('click', () => {
-            if (!this.classList.contains('map-displayed')) {
-                console.log("LA RAISON DE POURQUOI CA SE FAIT PLUSIEURs FOIS");
-                this.replaceWithMapComponent();
+                // Ajouter un écouteur pour le deuxième bouton (vélo)
+                buttons[1].addEventListener('click', () => {
+                    console.log("j'suis la ??");
+                    if (!this.classList.contains('map-displayed')) {
+                        this.replaceWithMapComponent();
+                        this.velo = true;
+                    }
+                });
             }
-        });
+        }*/
 
         if (this.classList.contains('map-displayed')) {
             newTransportsButtons.setAttribute('etat', 'map-displayed');
@@ -224,6 +244,7 @@ class SearchComponent extends HTMLElement {
         destinationInput.value = temp;
     }
     replaceWithMapComponent() {
+        this.updateInfos();
         return new Promise((resolve) => { 
             console.log("creation map component");
             const mapComponent = document.createElement('map-component');
@@ -414,8 +435,8 @@ class SearchComponent extends HTMLElement {
                 try {
                     // Parsing sécurisé du message JSON
                     this.parsedMessage = JSON.parse(message.body);
-                    this.updateInfos();
-                    
+                    //this.updateInfos();
+                    this.setTimes();
                 } catch (error) {
                     console.error('Erreur lors du traitement du message ActiveMQ :', error, message.body);
                 }
@@ -488,7 +509,92 @@ class SearchComponent extends HTMLElement {
             console.log("fetch done");
         }
 
-    } 
+    }
+    
+    setTimes() {
+        // Initialiser les valeurs piedTime et veloTime à 0
+        let piedTimeTotal = 0;
+        let veloTimeTotal = 0;
+    
+        // Vérifier si le message est bien défini dans this.parsedMessage
+        const message = this.parsedMessage;
+    
+        if (!message) {
+            console.error("Message non trouvé dans parsedMessage");
+            return;
+        }
+    
+        // Calculer le temps total de marche (Pied)
+        if (message.Pied && message.Pied.features && message.Pied.features.length > 0) {
+            console.log("LAAAA");
+            message.Pied.features.forEach(feature => {
+                if (feature.properties && feature.properties.segments) {
+                    feature.properties.segments.forEach(segment => {
+                        piedTimeTotal += segment.duration; // Ajouter chaque durée à piedTimeTotal
+                    });
+                }
+            });
+        }
+    
+        // Calculer le temps total pour le trajet mixte (Pied1 + Velo1 + Pied2)
+        if (message.Velo.Pied1 && message.Velo.Pied1.features && message.Velo.Pied1.features.length > 0) {
+            message.Velo.Pied1.features.forEach(feature => {
+                if (feature.properties && feature.properties.segments) {
+                    feature.properties.segments.forEach(segment => {
+                        veloTimeTotal += segment.duration; // Ajouter chaque durée de Pied1 à veloTimeTotal
+                    });
+                }
+            });
+        }
+    
+        if (message.Velo.Velo1 && message.Velo.Velo1.features && message.Velo.Velo1.features.length > 0) {
+            message.Velo.Velo1.features.forEach(feature => {
+                if (feature.properties && feature.properties.segments) {
+                    feature.properties.segments.forEach(segment => {
+                        veloTimeTotal += segment.duration; // Ajouter chaque durée de Velo1 à veloTimeTotal
+                    });
+                }
+            });
+        }
+    
+        if (message.Velo.Pied2 && message.Velo.Pied2.features && message.Velo.Pied2.features.length > 0) {
+            message.Velo.Pied2.features.forEach(feature => {
+                if (feature.properties && feature.properties.segments) {
+                    feature.properties.segments.forEach(segment => {
+                        veloTimeTotal += segment.duration; // Ajouter chaque durée de Pied2 à veloTimeTotal
+                    });
+                }
+            });
+        }
+
+        const transportsButtons = document.querySelector('transports-buttons');
+        transportsButtons.setAttribute('timePied', Math.round(piedTimeTotal / 60));
+        transportsButtons.setAttribute('timeVelo', Math.round(veloTimeTotal / 60));
+        transportsButtons.render(transportsButtons.shadowRoot);
+        //const buttons = transportsButtons.shadowRoot.querySelectorAll('.transport-button');
+        //console.log("selection de la selection mdr "+buttons[0]);
+        console.log("le query : "+transportsButtons.shadowRoot.querySelector("#pied"));
+
+        // Ajouter un écouteur pour le premier bouton (piéton)
+        transportsButtons.shadowRoot.querySelector("#pied").addEventListener('click', () => {
+            console.log("j'crois j'arrive jamais la");
+            if (!this.classList.contains('map-displayed')) {
+                this.velo = false;
+                this.replaceWithMapComponent();
+            }
+        });
+
+        // Ajouter un écouteur pour le deuxième bouton (vélo)
+        transportsButtons.shadowRoot.querySelector("#velo").addEventListener('click', () => {
+            console.log("j'suis la ??");
+            if (!this.classList.contains('map-displayed')) {
+                this.velo = true;
+                this.replaceWithMapComponent();
+            }
+        });
+        
+    }
+    
 
 }
 
