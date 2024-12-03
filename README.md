@@ -30,16 +30,15 @@ root/
 │   ├── index.html
 │   └── README.md                 # Documentation sur le frontend
 |
-├── backend-csharp/               # Projet backend en C#
-│   ├── ConsoleApp_for_Self_Hosted_WS/
-│   │   ├── Program.cs            # Point d'entrée pour le Routing Server
-│   │   ├── Interfaces/
-│   │   ├── Models/
-│   │   ├── Services/
-│   │   └── ConsoleApp_for_Self_Hosted_WS.sln
-│   └── README.md                 # Documentation sur le backend
+├── backend/               # Projet backend en C#
+│   ├── MiddlewareApp/     # Solution principale regroupant les projets backend
+│   │   ├── ConsoleApp_for_Self_Hosted_WS/   # Projet pour le serveur de routage (Routing Server)
+│   │   ├── SharedModels/                   # Projet contenant les modèles partagés, y compris l'itinerary
+│   │   ├── ProxyAndCache/                  # Projet pour gérer le cache générique et le service Proxy
+│   │   ├── MiddlewareApp.sln               # Fichier de solution principale
+│   └── README.md                           # Documentation sur le projet backend
 |
-├── heavy-client-java/            # Client lourd en Java pour communiquer via SOAP
+├── java/            # Client lourd en Java pour communiquer via SOAP
 │   ├── pom.xml                   # Configuration Maven
 │   ├── src/
 │   │   ├── main/
