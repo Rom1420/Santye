@@ -1,0 +1,3 @@
+Trace configuration initialized.
+Request received: Departure=Colomars, Destination=Nice
+Trace configuration initialized.

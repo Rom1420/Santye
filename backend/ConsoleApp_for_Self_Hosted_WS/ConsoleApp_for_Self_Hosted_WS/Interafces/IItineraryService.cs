@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 // add assembly System.ServiceModel  and using for the corresponding model
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using ConsoleApp_for_Self_Hosted_WS.Models;
+using SharedModels;
 
 namespace ConsoleApp_for_Self_Hosted_WS
 {
@@ -16,7 +16,7 @@ namespace ConsoleApp_for_Self_Hosted_WS
     {
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "/GetItinerary?departure={departure}&arrival={arrival}")]
-        Task<Itinerary> GetItinerary(string departure, string arrival);
+        Task<SharedModels.Itinerary> GetItinerary(string departure, string arrival);
     }
 
 }
