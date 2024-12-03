@@ -220,7 +220,7 @@ class MapComponent extends HTMLElement {
             }).addTo(this.map);
     
             // Centrer la carte sur la position actuelle
-            this.map.setView([message.features[0].geometry.coordinates[way_points][1], message.features[0].geometry.coordinates[way_points][0]], 70);
+            this.map.setView([message.features[0].geometry.coordinates[way_points][1], message.features[0].geometry.coordinates[way_points][0]], 12);
 
         } else {
             //trajet en vélo
@@ -278,7 +278,7 @@ class MapComponent extends HTMLElement {
             }).addTo(this.map);
     
             // Centrer la carte sur la position actuelle
-            this.map.setView([coordinates[way_points][1], coordinates[way_points][0]], 70);
+            this.map.setView([coordinates[way_points][1], coordinates[way_points][0]], 12);
 
         }
         /*

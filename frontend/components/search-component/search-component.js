@@ -205,29 +205,29 @@ class SearchComponent extends HTMLElement {
     createPermuteButton() {
         if(!this.querySelector('permute-button')){
             const destinationContainer = this.querySelector('.destination-container');
-        const permuteButton = document.createElement('div');
-        permuteButton.classList.add('permute-button');
+            const permuteButton = document.createElement('div');
+            permuteButton.classList.add('permute-button');
 
-        const span = document.createElement('span');
-        const icon = document.createElement('i');
-        icon.className = 'fas fa-repeat'; 
+            const span = document.createElement('span');
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-repeat'; 
 
-        span.appendChild(icon);
-        permuteButton.appendChild(span);
+            span.appendChild(icon);
+            permuteButton.appendChild(span);
 
-        permuteButton.addEventListener('click', () => this.swapInputs());
+            permuteButton.addEventListener('click', () => this.swapInputs());
 
-        destinationContainer.prepend(permuteButton);
-        destinationContainer.classList.add('show-permute-button');
+            destinationContainer.prepend(permuteButton);
+            destinationContainer.classList.add('show-permute-button');
 
-        const departContainerInput = this.querySelector('.depart-container .input');
-        const destinationContainerInput = this.querySelector('.destination-container .input');
-        if(departContainerInput.querySelector('position-component')){
-            departContainerInput.removeChild(departContainerInput.querySelector('position-component'));
-        }
-        if(destinationContainerInput.querySelector('position-component')){
-            destinationContainerInput.removeChild(destinationContainerInput.querySelector('position-component'));
-        }
+            const departContainerInput = this.querySelector('.depart-container .input');
+            const destinationContainerInput = this.querySelector('.destination-container .input');
+            if(departContainerInput.querySelector('position-component')){
+                departContainerInput.removeChild(departContainerInput.querySelector('position-component'));
+            }
+            if(destinationContainerInput.querySelector('position-component')){
+                destinationContainerInput.removeChild(destinationContainerInput.querySelector('position-component'));
+            }         
         }
     }
 
@@ -242,6 +242,10 @@ class SearchComponent extends HTMLElement {
         const temp = departInput.value;
         departInput.value = destinationInput.value;
         destinationInput.value = temp;
+        this.getItinerary(departInput.value, temp)
+        .then(queueName => {
+            this.updateInfos();
+        })
     }
     replaceWithMapComponent() {
         this.updateInfos();
