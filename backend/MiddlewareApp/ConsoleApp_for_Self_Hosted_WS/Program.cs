@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using ConsoleApp_for_Self_Hosted_WS.Services;
@@ -34,25 +33,27 @@ namespace ConsoleApp_for_Self_Hosted_WS
             };
 
             // Ajouter un point de terminaison avec cette liaison personnalisée
-            host.AddServiceEndpoint(typeof(IItineraryService), binding, "");
-             
-            // Ajouter un comportement RESTful
-            WebHttpBehavior webHttpBehavior = new WebHttpBehavior();
-            host.Description.Endpoints[0].Behaviors.Add(webHttpBehavior);
+            host.AddServiceEndpoint(typeof(IItineraryService), new WebHttpBinding(), "")
+                .Behaviors.Add(new WebHttpBehavior());
+            host.AddServiceEndpoint(typeof(IItineraryService), new BasicHttpBinding(), "soap");
+
+       
 
             // Activer l'échange de métadonnées
             ServiceMetadataBehavior smb = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-
             if (smb == null)
             {
                 smb = new ServiceMetadataBehavior();
-                smb.HttpGetEnabled = true;
+                smb.HttpGetEnabled = true; // Activer l'accès aux métadonnées via HTTP
                 host.Description.Behaviors.Add(smb);
             }
             else
             {
                 smb.HttpGetEnabled = true; // Configurez l'instance existante
             }
+
+            // Ajouter un point de terminaison mex pour l'échange de métadonnées
+            host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding(), "mex");
 
             // Démarrer le service
             host.Open();

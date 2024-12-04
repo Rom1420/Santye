@@ -1,5 +1,10 @@
 package com.santye.client;
 
+import com.santye.client.generated.GetItinerary;
+import com.santye.client.generated.IItineraryService;
+import com.santye.client.generated.ItineraryService;
+import javafx.application.Platform;
+import javafx.scene.control.TextArea;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
@@ -30,28 +35,16 @@ public class TestWSClient {
 
             request.setDeparture(departureElement);
             request.setArrival(destinationElement);
+            port.getItinerary(request.getDeparture().getValue(), request.getArrival().getValue());
 
-            // Call the FindItinerary operation
-            Itinerary itinerary = port.getItinerary(request.getDeparture().getValue(), request.getArrival().getValue());
-
-
-            // Prepare the result
-            if (itinerary != null && itinerary.getSteps() != null) {
-                StringBuilder resultBuilder = new StringBuilder("Itinerary found:\n");
-                itinerary.getSteps().getValue().getOpenRouteServiceClientStep().forEach(step -> {
-                    resultBuilder.append("Step: ").append(step.getInstruction().getValue()).append("\n");
-                });
-                return resultBuilder.toString();
-            } else {
-                return "No itinerary found.";
-            }
+            return "Itinerary fetched successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Error while retrieving the itinerary: " + e.getMessage();
         }
     }
 
-    public static void listenToQueue(String queueName) {
+    public static void listenToQueue(String queueName, TextArea resultArea) {
         try {
             ConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
             Connection connection = factory.createConnection();
@@ -65,7 +58,11 @@ public class TestWSClient {
                 if (message instanceof TextMessage) {
                     try {
                         String text = ((TextMessage) message).getText();
-                        System.out.println("Received step from queue: " + text);
+
+                        // Mettre à jour l'interface utilisateur JavaFX
+                        Platform.runLater(() -> {
+                            QueueDataFormatter.formatAndDisplayQueueData(text, resultArea);
+                        });
                     } catch (JMSException e) {
                         e.printStackTrace();
                     }
@@ -74,14 +71,5 @@ public class TestWSClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        // Test SOAP request
-        String itineraryResult = findItinerary("48.8566,2.3522", "48.8606,2.3376");
-        System.out.println(itineraryResult);
-
-        // Listen to ActiveMQ queue for real-time updates
-        listenToQueue("itineraryQueue");
     }
 }

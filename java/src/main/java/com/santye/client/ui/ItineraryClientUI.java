@@ -56,6 +56,7 @@ public class ItineraryClientUI extends Application {
         primaryStage.setTitle("Client Lourd - Itinéraire");
         primaryStage.setScene(scene);
         primaryStage.show();
+        TestWSClient.listenToQueue("itineraryQueue", resultArea);
     }
 
     public static void main(String[] args) {
